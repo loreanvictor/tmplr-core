@@ -1,5 +1,6 @@
 import { Store } from '../scope/store'
-import { Runnable, Execution } from '../runnable'
+import { Execution } from '../execution'
+import { Runnable } from '../runnable'
 
 
 export class ReadExecution extends Execution<void> {

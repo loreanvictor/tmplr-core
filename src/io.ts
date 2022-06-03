@@ -1,5 +1,5 @@
 import { Deferred } from './deferred'
-import { Execution } from './runnable'
+import { Execution } from './execution'
 
 
 export interface Unpluggable {

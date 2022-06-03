@@ -25,7 +25,10 @@ export class PromptExecution extends IOExecution<string, PromptIO> {
     }
 
     const res = new Deferred<string>()
-    io.onValue(value => res.resolve(value))
+    io.onValue(value => {
+      io.unplug()
+      res.resolve(value)
+    })
 
     return res.promise
   }
