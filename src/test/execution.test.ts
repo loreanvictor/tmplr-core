@@ -1,6 +1,4 @@
-import { pipe, observe, tap, finalize } from 'streamlets'
-
-import { Execution, Stack } from '../execution'
+import { Execution } from '../execution'
 
 
 class ExA extends Execution<number> {
@@ -41,41 +39,33 @@ describe('Execution', () => {
 
   test('emits proper execution stack.', async () => {
     const exec = new ExD()
-    const tracked: Stack[] = []
-    let finalized = false
+    const trace = exec.trace()
 
-    pipe(
-      exec.tracker,
-      tap(stack => tracked.push(stack)),
-      finalize(() => finalized = true),
-      observe,
-    )
+    await trace.result
 
-    await exec.execute()
+    expect(trace.stacks.length).toBe(9)
+    expect(trace.stacks[0]!.peek()).toBe(exec)
 
-    expect(tracked.length).toBe(9)
-    expect(tracked[0]!.peek()).toBe(exec)
+    expect(trace.stacks[1]!.peek()).toBeInstanceOf(ExC)
+    expect(trace.stacks[1]!.parent()).toBe(exec)
+    const exC = trace.stacks[1]!.peek() as ExC
 
-    expect(tracked[1]!.peek()).toBeInstanceOf(ExC)
-    expect(tracked[1]!.parent()).toBe(exec)
-    const exC = tracked[1]!.peek() as ExC
+    expect(trace.stacks[2]!.peek()).toBeInstanceOf(ExA)
+    expect(trace.stacks[2]!.parent()).toBe(exC)
 
-    expect(tracked[2]!.peek()).toBeInstanceOf(ExA)
-    expect(tracked[2]!.parent()).toBe(exC)
+    expect(trace.stacks[3]!.peek()).toBe(exC)
 
-    expect(tracked[3]!.peek()).toBe(exC)
+    expect(trace.stacks[4]!.peek()).toBeInstanceOf(ExB)
+    expect(trace.stacks[4]!.parent()).toBe(exC)
 
-    expect(tracked[4]!.peek()).toBeInstanceOf(ExB)
-    expect(tracked[4]!.parent()).toBe(exC)
+    expect(trace.stacks[5]!.peek()).toBe(exC)
+    expect(trace.stacks[6]!.peek()).toBe(exec)
 
-    expect(tracked[5]!.peek()).toBe(exC)
-    expect(tracked[6]!.peek()).toBe(exec)
+    expect(trace.stacks[7]!.peek()).toBeInstanceOf(ExA)
+    expect(trace.stacks[7]!.parent()).toBe(exec)
 
-    expect(tracked[7]!.peek()).toBeInstanceOf(ExA)
-    expect(tracked[7]!.parent()).toBe(exec)
+    expect(trace.stacks[8]!.peek()).toBe(exec)
 
-    expect(tracked[8]!.peek()).toBe(exec)
-
-    expect(finalized).toBe(true)
+    expect(trace.finalized).toBe(true)
   })
 })

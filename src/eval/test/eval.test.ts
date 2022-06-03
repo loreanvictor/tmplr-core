@@ -66,4 +66,17 @@ describe('Evaluation context', () => {
     expect(res9).toBe('Hello {{ vars.name | weird }}!!')
     expect(res10).toBe('Hello ********!!')
   })
+
+  test('applies multiple piped strings properly too.', async () => {
+    const vars = providerFromFunctions({
+      'name': cached(async () => 'john Doe'),
+    })
+
+    const source = sourceFromProviders({ vars }, {})
+    const context = new EvaluationContext(source, StandardPipes)
+
+    const res = await context.evaluate('Hellow {{ vars.name | UPPERCASE }} ({{ vars.name | PascalCase }})')
+    expect(res).toBe('Hellow JOHN DOE (JohnDoe)')
+  })
 })
+

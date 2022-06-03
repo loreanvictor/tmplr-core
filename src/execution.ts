@@ -1,4 +1,4 @@
-import { pipe, Subject, map, tap, observe, finalize } from 'streamlets'
+import { pipe, Subject, map, tap, observe, finalize, Observation } from 'streamlets'
 
 
 export class Stack {
@@ -40,6 +40,28 @@ export abstract class Execution<T> {
     this.end()
 
     return result
+  }
+
+  public trace() {
+    const res = {} as any
+
+    res.stacks = <Stack[]>[]
+    res.finalized = false
+    res.observation = pipe(
+      this.tracker,
+      tap(stack => res.stacks.push(stack)),
+      finalize(() => res.finalized = true),
+      observe,
+    )
+
+    res.result = this.execute()
+
+    return res as {
+      stacks: Stack[]
+      finalized: boolean
+      observation: Observation<Stack>,
+      result: Promise<T>,
+    }
   }
 
   protected async delegate<U>(exec: Execution<U>) {
