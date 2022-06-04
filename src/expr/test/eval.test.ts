@@ -8,7 +8,7 @@ import { sourceFromProviders, storeFromProviders } from '../../scope/from-provid
 import { cached } from '../../scope/provider'
 
 
-describe('Eval', () => {
+describe(Eval, () => {
   test('evaluates given expression.', async () => {
     const names = providerFromFunctions({
       'jack': cached(async () => 'JACK!'),

@@ -18,7 +18,7 @@ class DummyStep extends Runnable<void> {
 }
 
 
-describe('Steps', () => {
+describe(Steps, () => {
   it('should run all steps', async () => {
     const steps = [new DummyStep(), new DummyStep(), new DummyStep()]
     const exec = new Steps(steps).run()

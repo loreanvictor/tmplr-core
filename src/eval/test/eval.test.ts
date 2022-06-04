@@ -2,10 +2,10 @@ import { EvaluationContext } from '../context'
 import { cached } from '../../scope/provider/cached'
 import { providerFromFunctions } from '../../scope/provider/from-functions'
 import { sourceFromProviders } from '../../scope/from-providers'
-import { StandardPipes } from '../pipe'
+import { STANDARD_PIPES } from '../pipe'
 
 
-describe('Evaluation context', () => {
+describe(EvaluationContext, () => {
   test('replaces vars in text from given source.', async () => {
     const names = providerFromFunctions({
       'jack': cached(async () => 'JACK!'),
@@ -41,7 +41,7 @@ describe('Evaluation context', () => {
     })
 
     const source = sourceFromProviders({ vars }, {})
-    const context = new EvaluationContext(source, StandardPipes)
+    const context = new EvaluationContext(source, STANDARD_PIPES)
     context.pipes.add('* case', (str: string) => '*'.repeat(str.length))
 
     const res1 = await context.evaluate('Hello {{ vars.name | UPPERCASE }}!!')
@@ -73,7 +73,7 @@ describe('Evaluation context', () => {
     })
 
     const source = sourceFromProviders({ vars }, {})
-    const context = new EvaluationContext(source, StandardPipes)
+    const context = new EvaluationContext(source, STANDARD_PIPES)
 
     const res = await context.evaluate('Hellow {{ vars.name | UPPERCASE }} ({{ vars.name | PascalCase }})')
     expect(res).toBe('Hellow JOHN DOE (JohnDoe)')

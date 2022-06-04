@@ -2,7 +2,7 @@ import { Prompt } from '../prompt'
 import { Value } from '../value'
 
 
-describe('Prompt', () => {
+describe(Prompt, () => {
   test('reads a value from given IO interface.', async () => {
     jest.useFakeTimers()
 

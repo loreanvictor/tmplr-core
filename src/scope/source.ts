@@ -6,7 +6,7 @@ export interface Source {
 
 
 export const NULL_SOURCE: Source = {
-  get: async () => { throw new Error('Cannot get values on a null store') },
+  get: async () => { throw new ReferenceError('Cannot get values on a null source') },
   has: () => false,
   cleanup: async () => {},
 }

@@ -28,7 +28,7 @@ class ExD extends Execution<boolean> {
 }
 
 
-describe('Execution', () => {
+describe(Execution, () => {
   test('executes properly.', async () => {
     const exec = new ExD()
     const result = await exec.execute()

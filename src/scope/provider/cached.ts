@@ -23,5 +23,5 @@ export function cached<T>(fn: () => Promise<T>) {
 
 
 export function isCachedFunction<T>(fn: (() => Promise<T>) | CachedFunction<T>): fn is CachedFunction<T> {
-  return (fn as any).__cachedFunc
+  return (fn as any).__cachedFunc || false
 }

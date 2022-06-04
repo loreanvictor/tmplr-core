@@ -1,7 +1,7 @@
 import { Deferred } from '../deferred'
 
 
-describe('Deferred', () => {
+describe(Deferred, () => {
   test('allows manually resolving a value later.', async () => {
     const deferred = new Deferred<number>()
 

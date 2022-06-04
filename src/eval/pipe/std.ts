@@ -41,7 +41,7 @@ function lowerCase(str: string) {
 }
 
 
-export const StandardPipes = {
+export const STANDARD_PIPES = {
   camelCase: (str: string) => camelCase(str),
   'Capital Case': (str: string) => capitalCase(str),
   CONSTANT_CASE: (str: string) => constantCase(str),

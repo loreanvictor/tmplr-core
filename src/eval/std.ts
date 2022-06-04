@@ -1,8 +1,8 @@
 import { Source } from '../scope/source'
 import { EvaluationContext } from './context'
-import { StandardPipes } from './pipe'
+import { STANDARD_PIPES } from './pipe'
 
 
 export function createStandardContext(source: Source) {
-  return new EvaluationContext(source, StandardPipes)
+  return new EvaluationContext(source, STANDARD_PIPES)
 }

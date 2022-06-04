@@ -9,6 +9,6 @@ export interface Store extends Source {
 export const NULL_STORE: Store = {
   ...NULL_SOURCE,
   set: async () => {
-    throw new Error('Cannot set values on a null store')
+    throw new TypeError('Cannot set values on a null store')
   },
 }

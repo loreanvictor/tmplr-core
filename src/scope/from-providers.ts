@@ -1,10 +1,8 @@
-import { Provider } from './provider'
 import { Source } from './source'
 import { Store } from './store'
-import { Scope } from './scope'
+import { Scope, ProviderNamespace } from './scope'
 
 
-type ProviderNamespace = {[namespace: string]: Provider}
 type VarBag = {[key: string]: string}
 
 
@@ -21,18 +19,18 @@ export function sourceFromProviders(
           return vars[namespace!]!
         }
 
-        throw new Error(`Unknown variable: ${addr}`)
+        throw new ReferenceError(`Unknown variable: ${addr}`)
       } else {
         if (namespace! in providers) {
           const provider = providers[namespace!]
           if (!provider!.has(key)) {
-            throw new Error(`Provider ${namespace} does not have a key ${key}`)
+            throw new ReferenceError(`Provider ${namespace} does not have a key ${key}`)
           }
 
           return await provider!.get(key)()
         }
 
-        throw new Error(`Unknown provider: ${namespace}`)
+        throw new ReferenceError(`Unknown provider: ${namespace}`)
       }
     },
 
@@ -92,10 +90,9 @@ export function scopeFromProviders(
 ): Scope {
   const store = storeFromProviders(providers, vars)
   const _vars = createVarSource(store, variablePrefix)
-  const snapshot = { ...vars }
 
-  const sub = (additionalProviders: ProviderNamespace = {}) => {
-    return scopeFromProviders({ ...providers, ...additionalProviders }, variablePrefix, { ...snapshot })
+  const sub = (additionalProviders: ProviderNamespace) => {
+    return scopeFromProviders({ ...providers, ...additionalProviders }, variablePrefix, { ...vars })
   }
 
   return {

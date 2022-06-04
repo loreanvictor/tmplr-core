@@ -11,7 +11,7 @@ export function providerFromFunctions(map: {[name: string]: MaybeCachedFunction}
   return {
     get(key: string) {
       if (!(key in transformed)) {
-        throw new Error(`Provider does not have key: ${key}`)
+        throw new ReferenceError(`Provider does not have key: ${key}`)
       }
 
       const func = transformed[key]!

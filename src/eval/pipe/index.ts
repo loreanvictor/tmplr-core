@@ -1,3 +1,3 @@
 export * from './pipe'
 export * from './registry'
-export { StandardPipes } from './std'
+export { STANDARD_PIPES } from './std'
