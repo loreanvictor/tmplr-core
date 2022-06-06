@@ -37,6 +37,6 @@
   },
   "dependencies": {
     "change-case": "^4.1.2",
-    "streamlets": "^0.4.8"
+    "streamlets": "^0.5.0"
   }
 }

@@ -1,13 +1,14 @@
-import { Provider, providerFromFunctions } from '../provider'
+import { CleanableProvider, providerFromFunctions } from '../provider'
 import { scopeFromProviders, sourceFromProviders, storeFromProviders } from '../from-providers'
 
 
 describe(sourceFromProviders, () => {
   test('creates a source.', async () => {
-    const cleanable: Provider = {
+    const cleanable: CleanableProvider = {
       get: jest.fn(),
       has: jest.fn(),
-      cleanup: jest.fn()
+      cleanup: jest.fn(),
+      isolate: jest.fn(),
     }
 
     const provider = providerFromFunctions({
@@ -94,15 +95,13 @@ describe(scopeFromProviders, () => {
     expect(sub.has('stuff.foo')).toBe(true)
     expect(sub.has('things.foo')).toBe(true)
 
-    expect(sub.vars.has('tmplr.john')).toBe(true)
+    expect(sub.vars.has('tmplr.john')).toBe(false)
     expect(sub.vars.has('tmplr.var')).toBe(true)
 
     await expect(sub.get('things.foo')).resolves.toBe('baz')
     await expect(sub.get('stuff.foo')).resolves.toBe('bar')
-    await expect(sub.get('john')).resolves.toBe('doe')
     await expect(sub.get('var')).resolves.toBe('value')
     await expect(sub.vars.get('tmplr.var')).resolves.toBe('value')
-    await expect(sub.vars.get('tmplr.john')).resolves.toBe('doe')
 
     await expect(async () => sub.get('stuff.qux')).rejects.toThrow(ReferenceError)
 
@@ -110,7 +109,6 @@ describe(scopeFromProviders, () => {
     await scope.set('bla', 'bla')
 
     await expect(scope.get('john')).resolves.toBe('cash')
-    await expect(sub.get('john')).resolves.toBe('doe')
     expect(sub.has('bla')).toBe(false)
     expect(sub.vars.has('tmplr.bla')).toBe(false)
 
@@ -121,6 +119,25 @@ describe(scopeFromProviders, () => {
     const scope = scopeFromProviders({}, 'vars')
 
     expect(scope.has('foo')).toBe(false)
+  })
+
+  test('isolates cleanable providers for subscopes.', async () => {
+    const isolatedCleanup = jest.fn()
+    const cleanable: CleanableProvider = {
+      ...providerFromFunctions({
+        foo: async () => 'bar',
+      }),
+      cleanup: jest.fn(),
+      isolate: () => ({ ...cleanable, cleanup: isolatedCleanup }),
+    }
+
+    const scope = scopeFromProviders({ cleanable }, '_')
+    const sub = scope.sub({})
+
+    await expect(sub.get('cleanable.foo')).resolves.toBe('bar')
+    await sub.cleanup()
+    expect(isolatedCleanup).toHaveBeenCalled()
+    expect(cleanable.cleanup).not.toHaveBeenCalled()
   })
 })
 

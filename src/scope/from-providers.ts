@@ -1,6 +1,7 @@
 import { Source } from './source'
 import { Store } from './store'
 import { Scope, ProviderNamespace } from './scope'
+import { isCleanable } from './provider'
 
 
 type VarBag = {[key: string]: string}
@@ -46,7 +47,7 @@ export function sourceFromProviders(
 
     async cleanup() {
       for (const provider of Object.values(providers)) {
-        if (provider!.cleanup) {
+        if (isCleanable(provider)) {
           await provider!.cleanup()
         }
       }
@@ -90,9 +91,17 @@ export function scopeFromProviders(
 ): Scope {
   const store = storeFromProviders(providers, vars)
   const _vars = createVarSource(store, variablePrefix)
+  const snapshot = { ...vars }
 
   const sub = (additionalProviders: ProviderNamespace) => {
-    return scopeFromProviders({ ...providers, ...additionalProviders }, variablePrefix, { ...vars })
+    const isolated = { ...providers }
+    Object.entries(isolated).forEach(([name, provider]) => {
+      if (isCleanable(provider)) {
+        isolated[name] = provider.isolate()
+      }
+    })
+
+    return scopeFromProviders({ ...isolated, ...additionalProviders }, variablePrefix, snapshot)
   }
 
   return {

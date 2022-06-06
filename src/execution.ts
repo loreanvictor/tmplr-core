@@ -2,7 +2,7 @@ import { pipe, Subject, map, tap, observe, finalize, Observation } from 'streaml
 
 
 export class Stack {
-  constructor(private stack: Execution<unknown>[]) {}
+  constructor(readonly stack: Execution<unknown>[]) {}
 
   prepend(execution: Execution<unknown>) {
     return new Stack([execution, ...this.stack])
