@@ -1,6 +1,10 @@
 # tmplr-core
 
 [![tests](https://github.com/loreanvictor/tmplr-core/actions/workflows/test.yml/badge.svg)](https://github.com/loreanvictor/tmplr-core/actions/workflows/test.yml)
+[![coverage](https://github.com/loreanvictor/tmplr-core/actions/workflows/coverage.yml/badge.svg)](https://github.com/loreanvictor/tmplr-core/actions/workflows/coverage.yml)
+[![version](https://img.shields.io/npm/v/@tmplr/core?logo=npm)](https://www.npmjs.com/package/@tmplr/core)
+
+
 
 ```bash
 npm i @tmplr/core
