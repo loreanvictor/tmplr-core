@@ -1,4 +1,4 @@
-# tmplr-core
+# @tmplr/core
 
 [![tests](https://github.com/loreanvictor/tmplr-core/actions/workflows/test.yml/badge.svg)](https://github.com/loreanvictor/tmplr-core/actions/workflows/test.yml)
 [![coverage](https://github.com/loreanvictor/tmplr-core/actions/workflows/coverage.yml/badge.svg)](https://github.com/loreanvictor/tmplr-core/actions/workflows/coverage.yml)
