@@ -2,11 +2,21 @@
   "name": "@tmplr/core",
   "version": "0.0.1",
   "description": "core concepts and commands for tmplr",
-  "main": "index.js",
+  "main": "dist/commonjs/index.js",
+  "module": "dist/es/index.js",
+  "types": "dist/es/index.d.ts",
   "type": "module",
+  "files": [
+    "dist/commonjs",
+    "dist/es"
+  ],
+  "sideEffects": false,
   "scripts": {
     "test": "jest",
     "coverage": "jest --coverage",
+    "build-commonjs": "tsc -p conf/typescript/commonjs.json",
+    "build-es": "tsc -p conf/typescript/es.json",
+    "build": "npm run build-commonjs && npm run build-es",
     "prepack": "npm run build"
   },
   "repository": {

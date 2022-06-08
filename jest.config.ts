@@ -7,4 +7,12 @@ export default {
     'src/**/*.{ts,tsx}',
     '!src/**/*.test.{ts,tsx}',
   ],
+  coverageThreshold: {
+    global: {
+      branches: 100,
+      functions: 90,
+      lines: 100,
+      statements: 100,
+    },
+  }
 }

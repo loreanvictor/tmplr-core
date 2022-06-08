@@ -5,6 +5,7 @@ import { FileSystem } from '../../filesystem'
 import { providerFromFunctions, Scope, scopeFromProviders } from '../../scope'
 import { Run } from '../run'
 import { EvaluationContext } from '../../eval/context'
+import { ChangeLog } from '../change'
 
 
 describe(Run, () => {
@@ -18,6 +19,7 @@ describe(Run, () => {
       write: jest.fn(() => Promise.resolve()),
       access: jest.fn(() => Promise.resolve()),
       rm: jest.fn(() => Promise.resolve()),
+      fetch: jest.fn(() => Promise.resolve()),
     }
 
     const dummyFS2 = { ...dummyFS }
@@ -26,7 +28,7 @@ describe(Run, () => {
     }, '_', { foo: 'bar' })
     await scope.set('baz', 'qux')
 
-    const parse = (content: string, filesystem: FileSystem, s: Scope) => {
+    const parse = (content: string, s: Scope, filesystem: FileSystem) => {
       expect(content).toBe('content of the file')
       expect(filesystem).toBe(dummyFS2)
       expect(s.has('foo')).toBe(true)
@@ -47,6 +49,7 @@ describe(Run, () => {
       parse,
       dummyFS,
       scope,
+      new ChangeLog(),
     )
 
     await run.run().execute()

@@ -1,13 +1,3 @@
 {
-	"extends": "@sindresorhus/tsconfig",
-	"compilerOptions": {
-		"moduleResolution": "node",
-		"module": "esnext",
-		"jsx": "react",
-		"esModuleInterop": true,
-		"outDir": "dist",
-		"noImplicitAny": false
-	},
-	"include": ["src"],
-	"exclude": ["**/test/**/*"]
+	"extends": "./conf/typescript/base.json"
 }

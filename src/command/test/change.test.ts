@@ -1,14 +1,25 @@
 import { ChangeLog, ChangeExecution } from '../change'
-import { NodeFS } from '../../filesystem'
+import { FileSystem } from '../../filesystem'
 
 
 describe(ChangeExecution, () => {
   test('commits logs of changes to given change log', async () => {
     const log = new ChangeLog()
+    const dummyFS: FileSystem = {
+      read: jest.fn(() => Promise.resolve('content')),
+      write: jest.fn(() => Promise.resolve()),
+      access: jest.fn(() => Promise.resolve()),
+      rm: jest.fn(() => Promise.resolve()),
+      scope: 'scope',
+      root: 'root',
+      absolute: jest.fn(() => 'absolute'),
+      cd: jest.fn(() => dummyFS),
+      fetch: jest.fn(() => Promise.resolve()),
+    }
 
     class DummyChangeExec extends ChangeExecution {
       constructor() {
-        super(new NodeFS(), log)
+        super(dummyFS, log)
       }
 
       async commit() {
