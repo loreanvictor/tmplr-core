@@ -7,7 +7,7 @@ export class FromExecution extends Execution<string> {
   constructor(readonly from: From) { super() }
 
   async run() {
-    if (this.from.source.has(this.from.name)) {
+    if (await this.from.source.has(this.from.name)) {
       return await this.from.source.get(this.from.name)
     } if (this.from.fallback) {
       return await this.delegate(this.from.fallback.run())

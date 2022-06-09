@@ -10,7 +10,7 @@ import { EvaluationContext } from '../eval/context'
 
 class ExA extends Execution<void> {
   constructor(readonly R: RA) { super() }
-  async run() { this.R.scope.get('args.a') }
+  async run() { await this.R.scope.get('args.a') }
 }
 
 class RA extends Runnable<void> {
@@ -20,7 +20,7 @@ class RA extends Runnable<void> {
 
 class ExB extends Execution<void> {
   constructor(readonly R: RB) { super() }
-  async run() { this.R.scope.get('args.b') }
+  async run() { await this.R.scope.get('args.b') }
 }
 
 class RB extends Runnable<void> {
@@ -47,12 +47,12 @@ class RArg2 extends Runnable<string> { run() { return new ExArg2 }}
 describe(SandBox, () => {
   test('properly executes given runnable.', async () => {
     const scope = scopeFromProviders({}, '_', { foo: 'bar' })
+    let received: Scope = {} as any
     await scope.set('baz', 'qux')
 
     const sandbox = new SandBox(
       s => {
-        expect(s.has('foo')).toBe(true)
-        expect(s.has('baz')).toBe(false)
+        received = s
 
         return new Steps([
           new Read('AA', new Eval('{{ args.a }}', new EvaluationContext(s)), s),
@@ -72,12 +72,15 @@ describe(SandBox, () => {
 
     await sandbox.execute()
 
-    expect(scope.has('C')).toBe(true)
+    await expect(scope.has('C')).resolves.toBe(true)
     await expect(scope.get('C')).resolves.toBe('a --- b')
 
-    expect(scope.has('args')).toBe(false)
-    expect(scope.has('output')).toBe(false)
-    expect(scope.has('AA')).toBe(false)
+    await expect(scope.has('args')).resolves.toBe(false)
+    await expect(scope.has('output')).resolves.toBe(false)
+    await expect(scope.has('AA')).resolves.toBe(false)
+
+    await expect(received.has('foo')).resolves.toBe(true)
+    await expect(received.has('baz')).resolves.toBe(false)
   })
 
   test('cleans up the scope after execution.', async () => {

@@ -28,12 +28,12 @@ describe(Run, () => {
     }, '_', { foo: 'bar' })
     await scope.set('baz', 'qux')
 
+    let received: Scope = {} as any
+
     const parse = (content: string, s: Scope, ctx: EvaluationContext, filesystem: FileSystem) => {
       expect(content).toBe('content of the file')
       expect(filesystem).toBe(dummyFS2)
-      expect(s.has('foo')).toBe(true)
-      expect(s.has('things.foo')).toBe(true)
-      expect(s.has('baz')).toBe(false)
+      received = s
 
       return new Read(
         'out',
@@ -55,8 +55,12 @@ describe(Run, () => {
 
     await run.run().execute()
 
-    expect(scope.has('b')).toBe(true)
+    await expect(scope.has('b')).resolves.toBe(true)
     await expect(scope.get('b')).resolves.toBe('hellow world')
-    expect(scope.has('out')).toBe(false)
+    await expect(scope.has('out')).resolves.toBe(false)
+
+    await expect(received.has('foo')).resolves.toBe(true)
+    await expect(received.has('things.foo')).resolves.toBe(true)
+    await expect(received.has('baz')).resolves.toBe(false)
   })
 })

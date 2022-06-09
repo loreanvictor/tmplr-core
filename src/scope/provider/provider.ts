@@ -3,7 +3,7 @@ import { CachedFunction } from './cached'
 
 export interface Provider {
   get(key: string): CachedFunction<string>
-  has(key: string): boolean
+  has(key: string): Promise<boolean>
 }
 
 

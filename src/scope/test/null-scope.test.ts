@@ -8,9 +8,9 @@ describe('NULL_SOURCE', () => {
     await expect(async () => NULL_SOURCE.get('foo')).rejects.toThrow(ReferenceError)
   })
 
-  test('has no values.', () => {
-    expect(NULL_SOURCE.has('foo')).toBe(false)
-    expect(NULL_SOURCE.has('bar')).toBe(false)
+  test('has no values.', async () => {
+    await expect(NULL_SOURCE.has('foo')).resolves.toBe(false)
+    await expect(NULL_SOURCE.has('bar')).resolves.toBe(false)
   })
 
   test('can be cleaned.', async () => {
@@ -28,9 +28,9 @@ describe('NULL_STORE', () => {
     await expect(async () => NULL_STORE.set('foo', 'bar')).rejects.toThrow(TypeError)
   })
 
-  test('has no values.', () => {
-    expect(NULL_STORE.has('foo')).toBe(false)
-    expect(NULL_STORE.has('bar')).toBe(false)
+  test('has no values.', async () => {
+    await expect(NULL_STORE.has('foo')).resolves.toBe(false)
+    await expect(NULL_STORE.has('bar')).resolves.toBe(false)
   })
 })
 
@@ -40,9 +40,9 @@ describe('NULL_SCOPE', () => {
     await expect(async () => NULL_SCOPE.get('foo')).rejects.toThrow(ReferenceError)
   })
 
-  test('has no values.', () => {
-    expect(NULL_SCOPE.has('foo')).toBe(false)
-    expect(NULL_SCOPE.has('bar')).toBe(false)
+  test('has no values.', async () => {
+    await expect(NULL_SCOPE.has('foo')).resolves.toBe(false)
+    await expect(NULL_SCOPE.has('bar')).resolves.toBe(false)
   })
 
   test('cannot set values on it.', async () => {

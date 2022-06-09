@@ -23,7 +23,7 @@ export function providerFromFunctions(map: {[name: string]: MaybeCachedFunction}
         return func
       }
     },
-    has(key: string) {
+    async has(key: string) {
       return key in transformed
     }
   }

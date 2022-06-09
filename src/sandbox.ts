@@ -24,7 +24,7 @@ export class SandBox extends Execution<void> {
 
     const scope = this.scope.sub({
       args: {
-        has(key: string) { return key in cache },
+        async has(key: string) { return key in cache },
         get(key: string) { return cache[key]! },
       }
     })
@@ -38,7 +38,7 @@ export class SandBox extends Execution<void> {
     }
 
     for (const [name, outname] of Object.entries(this.outputs)) {
-      if (scope.has(outname)) {
+      if (await scope.has(outname)) {
         this.scope.set(name, await scope.get(outname))
       } else {
         throw new ReferenceError('Output not found: ' + outname)

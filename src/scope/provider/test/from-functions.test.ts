@@ -11,9 +11,9 @@ describe('providerFromFunctions()', () => {
       bar,
     })
 
-    expect(provider.has('foo')).toBe(true)
-    expect(provider.has('bar')).toBe(true)
-    expect(provider.has('baz')).toBe(false)
+    await expect(provider.has('foo')).resolves.toBe(true)
+    await expect(provider.has('bar')).resolves.toBe(true)
+    await expect(provider.has('baz')).resolves.toBe(false)
 
     await expect(provider.get('foo')()).resolves.toBe('Hellow')
     await expect(provider.get('bar')()).resolves.toBe('World')

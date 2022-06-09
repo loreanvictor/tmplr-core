@@ -28,7 +28,7 @@ export class EvaluationContext {
 
           const [addr, ...pipes] = piece.split('|').map(_ => _.trim())
 
-          if (this.source.has(addr!)) {
+          if (await this.source.has(addr!)) {
             try {
               return pipes
                 .map(e => this.pipes.evaluate(e))

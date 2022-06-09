@@ -24,7 +24,7 @@ export function sourceFromProviders(
       } else {
         if (namespace! in providers) {
           const provider = providers[namespace!]
-          if (!provider!.has(key)) {
+          if (!(await provider!.has(key))) {
             throw new ReferenceError(`Provider ${namespace} does not have a key ${key}`)
           }
 
@@ -35,7 +35,7 @@ export function sourceFromProviders(
       }
     },
 
-    has(addr: string) {
+    async has(addr: string) {
       const [namespace, key] = addr.split('.')
 
       if (!key) {
@@ -73,7 +73,7 @@ function createVarSource(store: Store, prefix: string): Source {
   const pre = prefix + '.'
 
   return {
-    has(key: string) {
+    async has(key: string) {
       return key.startsWith(pre) && store.has(key.slice(pre.length))
     },
     async get(key: string) {
