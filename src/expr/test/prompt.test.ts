@@ -8,31 +8,31 @@ describe(Prompt, () => {
 
     const exec = new Prompt('What is the value?').run()
 
-    let msg = ''
-    let def = ''
-    let unplugged = false
+    const setMessage = jest.fn()
+    const setDefault = jest.fn()
+    const unplug = jest.fn()
 
     const res = await Promise.all([
       exec.execute(),
       (
         async () => {
           exec.plug(() => ({
-            setMessage: m => msg = m,
-            setDefault: d => def = d,
-            onValue: cb => {
-              setTimeout(() => cb('Some value'), 100)
+            setMessage,
+            setDefault,
+            value: () => new Promise<string>(resolve => {
+              setTimeout(() => resolve('Some value'), 100)
               jest.advanceTimersByTime(100)
-            },
-            unplug: () => unplugged = true,
+            }),
+            unplug,
           }))
         }
       )()
     ])
 
-    expect(msg).toBe('What is the value?')
-    expect(def).toBe('')
+    expect(setMessage).toHaveBeenCalledWith('What is the value?')
+    expect(setDefault).not.toHaveBeenCalled()
     expect(res).toEqual(['Some value', undefined])
-    expect(unplugged).toBe(true)
+    expect(unplug).toHaveBeenCalled()
 
     jest.useRealTimers()
   })
@@ -44,15 +44,15 @@ describe(Prompt, () => {
       new Value('Some default value'),
     ).run()
 
-    let def = ''
+    const setDefault = jest.fn()
 
     await Promise.all([
       exec.execute(),
       (
         async () => {
           exec.plug(() => ({
-            setDefault: d => def = d,
-            onValue: cb => cb('42'),
+            setDefault,
+            value: async () => '42',
             setMessage: () => {},
             unplug: () => {}
           }))
@@ -60,6 +60,6 @@ describe(Prompt, () => {
       )()
     ])
 
-    expect(def).toBe('Some default value')
+    expect(setDefault).toHaveBeenCalledWith('Some default value')
   })
 })

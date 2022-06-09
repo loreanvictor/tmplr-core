@@ -21,17 +21,17 @@ describe(EvaluationContext, () => {
 
 
   test('does not touch non existing variables.', async () => {
-    const names = providerFromFunctions({
+    const _ = providerFromFunctions({
       'jack': cached(async () => 'JACK!'),
     })
 
-    const source = sourceFromProviders({ names }, { 'jill': 'JILL!' })
+    const source = sourceFromProviders({ _ }, { 'jill': 'JILL!' })
     const context = new EvaluationContext(source)
 
     const res = await context.evaluate(
-      'Hellow {{names.jack}}, how is {{ names.jill   }} doing? Whats up with {{ jill }}?'
+      'Hellow {{_.jack}}, how is {{ _.jill   }} doing? Whats up with {{ jill }}?'
     )
-    expect(res).toBe('Hellow JACK!, how is {{ names.jill   }} doing? Whats up with JILL!?')
+    expect(res).toBe('Hellow JACK!, how is {{ _.jill   }} doing? Whats up with JILL!?')
   })
 
 

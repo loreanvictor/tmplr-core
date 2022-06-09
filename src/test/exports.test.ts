@@ -7,9 +7,11 @@ import {
   Provider, CleanableProvider, isCleanable, CachedFunction, cached, isCachedFunction,
   providerFromFunctions,
   FileSystem, AccessError,
-  Eval, EvalExecution, Prompt, PromptExecution, Value, ValueExecution,
+  Eval, EvalExecution, Prompt, PromptExecution, Value, ValueExecution, Choices, ChoicesExecution, Choice,
+  Path, PathExecution,
   ChangeDetails, ChangeLogEntry, ChangeLog, ChangeExecution, Read, ReadExecution, Run, RunExecution, ParseFn,
-  Steps, StepsExecution,
+  Steps, StepsExecution, If, IfExecution, Copy, CopyExecution, Update, UpdateExecution, Degit, DegitExecution,
+  Remove, RemoveExecution,
   EvaluationContext, STANDARD_PIPES, Pipe, PipeMap, PipeRegistry,
 } from '../index'
 
@@ -48,6 +50,11 @@ test('all necessary stuff are exported.', () => {
   expect(PromptExecution).not.toBe(undefined)
   expect(Value).not.toBe(undefined)
   expect(ValueExecution).not.toBe(undefined)
+  expect(Choices).not.toBe(undefined)
+  expect(ChoicesExecution).not.toBe(undefined)
+  expect(<Choice>{}).not.toBe(undefined)
+  expect(Path).not.toBe(undefined)
+  expect(PathExecution).not.toBe(undefined)
   expect(<ChangeDetails>{}).not.toBe(undefined)
   expect(<ChangeLogEntry>{}).not.toBe(undefined)
   expect(ChangeLog).not.toBe(undefined)
@@ -59,6 +66,16 @@ test('all necessary stuff are exported.', () => {
   expect(<ParseFn>{}).not.toBe(undefined)
   expect(Steps).not.toBe(undefined)
   expect(StepsExecution).not.toBe(undefined)
+  expect(Update).not.toBe(undefined)
+  expect(UpdateExecution).not.toBe(undefined)
+  expect(Degit).not.toBe(undefined)
+  expect(DegitExecution).not.toBe(undefined)
+  expect(Remove).not.toBe(undefined)
+  expect(RemoveExecution).not.toBe(undefined)
+  expect(Copy).not.toBe(undefined)
+  expect(CopyExecution).not.toBe(undefined)
+  expect(If).not.toBe(undefined)
+  expect(IfExecution).not.toBe(undefined)
   expect(EvaluationContext).not.toBe(undefined)
   expect(STANDARD_PIPES).not.toBe(undefined)
   expect(<Pipe>{}).not.toBe(undefined)

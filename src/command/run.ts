@@ -6,11 +6,13 @@ import { FileSystem } from '../filesystem'
 import { Scope } from '../scope'
 import { SandBox } from '../sandbox'
 import { ChangeLog } from './change'
+import { EvaluationContext } from '../eval'
 
 
 export type ParseFn = (
   content: string,
   scope: Scope,
+  context: EvaluationContext,
   filesystem: FileSystem,
   changelog: ChangeLog,
 ) => Runnable<void>
@@ -26,7 +28,13 @@ export class RunExecution extends Execution<void> {
 
     await this.delegate(
       new SandBox(
-        scope => this._run.parse(content, scope, filesystem, this._run.changelog),
+        scope => this._run.parse(
+          content,
+          scope,
+          new EvaluationContext(scope, this._run.context.pipes),
+          filesystem,
+          this._run.changelog
+        ),
         this._run.inputs,
         this._run.outputs,
         this._run.scope,
@@ -44,6 +52,7 @@ export class Run extends Runnable<void> {
     readonly parse: ParseFn,
     readonly filesystem: FileSystem,
     readonly scope: Scope,
+    readonly context: EvaluationContext,
     readonly changelog: ChangeLog,
   ) { super() }
 

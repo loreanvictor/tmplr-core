@@ -17,7 +17,7 @@ export class EvaluationContext {
   }
 
   async evaluate(expr: string) {
-    const RE = /{{(\s*[A-Za-z]\w*(?:\.[A-Za-z]\w*)?(?:\s*\|\s*[^:}]+(?::[^:}]+)?\s*)*\s*)}}/g
+    const RE = /{{(\s*[A-Za-z_]\w*(?:\.[A-Za-z]\w*)?(?:\s*\|\s*[^:}]+(?::[^:}]+)?\s*)*\s*)}}/g
 
     return (
       await Promise.all(

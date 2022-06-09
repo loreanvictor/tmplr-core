@@ -1,12 +1,11 @@
 import { IOExecution, Unpluggable } from '../io'
 import { Runnable } from '../runnable'
-import { Deferred } from '../deferred'
 
 
 export interface PromptIO extends Unpluggable {
   setMessage(msg: string): void
   setDefault(value: string): void
-  onValue(cb: (value: string) => void)
+  value(): Promise<string>
 }
 
 
@@ -24,13 +23,10 @@ export class PromptExecution extends IOExecution<string, PromptIO> {
       io.setDefault(_default)
     }
 
-    const res = new Deferred<string>()
-    io.onValue(value => {
-      io.unplug()
-      res.resolve(value)
-    })
+    const res = await io.value()
+    io.unplug()
 
-    return res.promise
+    return res
   }
 }
 

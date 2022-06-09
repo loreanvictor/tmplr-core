@@ -28,7 +28,7 @@ describe(Run, () => {
     }, '_', { foo: 'bar' })
     await scope.set('baz', 'qux')
 
-    const parse = (content: string, s: Scope, filesystem: FileSystem) => {
+    const parse = (content: string, s: Scope, ctx: EvaluationContext, filesystem: FileSystem) => {
       expect(content).toBe('content of the file')
       expect(filesystem).toBe(dummyFS2)
       expect(s.has('foo')).toBe(true)
@@ -37,7 +37,7 @@ describe(Run, () => {
 
       return new Read(
         'out',
-        new Eval('hellow {{ args.a }}', new EvaluationContext(s)),
+        new Eval('hellow {{ args.a }}', ctx),
         s
       )
     }
@@ -49,6 +49,7 @@ describe(Run, () => {
       parse,
       dummyFS,
       scope,
+      new EvaluationContext(scope),
       new ChangeLog(),
     )
 
