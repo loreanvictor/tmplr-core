@@ -11,7 +11,7 @@ import {
   Path, PathExecution,
   ChangeDetails, ChangeLogEntry, ChangeLog, ChangeExecution, Read, ReadExecution, Run, RunExecution, ParseFn,
   Steps, StepsExecution, If, IfExecution, Copy, CopyExecution, Update, UpdateExecution, Degit, DegitExecution,
-  Remove, RemoveExecution,
+  Remove, RemoveExecution, Use, UseExecution,
   EvaluationContext, STANDARD_PIPES, Pipe, PipeMap, PipeRegistry,
 } from '../index'
 
@@ -72,6 +72,8 @@ test('all necessary stuff are exported.', () => {
   expect(DegitExecution).not.toBe(undefined)
   expect(Remove).not.toBe(undefined)
   expect(RemoveExecution).not.toBe(undefined)
+  expect(Use).not.toBe(undefined)
+  expect(UseExecution).not.toBe(undefined)
   expect(Copy).not.toBe(undefined)
   expect(CopyExecution).not.toBe(undefined)
   expect(If).not.toBe(undefined)
