@@ -1,11 +1,10 @@
 {
   "name": "@tmplr/core",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "core concepts and commands for tmplr",
   "main": "dist/commonjs/index.js",
   "module": "dist/es/index.js",
   "types": "dist/es/index.d.ts",
-  "type": "module",
   "files": [
     "dist/commonjs",
     "dist/es"
