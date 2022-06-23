@@ -1,6 +1,7 @@
 import { FileSystem } from '../../filesystem'
 import { Value } from '../../expr/value'
 import { Remove } from '../remove'
+import { ChangeLog } from '../change'
 
 
 describe(Remove, () => {
@@ -17,11 +18,15 @@ describe(Remove, () => {
       root: 'root',
     }
 
+    const log = new ChangeLog()
+
     await new Remove(
       new Value('some/path'),
       dummyFS,
+      log,
     ).run().execute()
 
     expect(dummyFS.rm).toHaveBeenCalledWith('some/path')
+    expect(log.entries()[0]!.details['target']).toBe('some/path')
   })
 })

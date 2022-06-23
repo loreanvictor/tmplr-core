@@ -3,6 +3,7 @@ import { Value } from '../../expr/value'
 import { EvaluationContext } from '../../eval'
 import { scopeFromProviders } from '../../scope'
 import { Copy } from '../copy'
+import { ChangeLog } from '../change'
 
 
 describe(Copy, () => {
@@ -21,14 +22,18 @@ describe(Copy, () => {
 
     const scope = scopeFromProviders({}, '_', { name: 'world' })
     const context = new EvaluationContext(scope.vars)
+    const log = new ChangeLog()
 
     await new Copy(
       new Value('some/path'),
       new Value('some/other/path'),
       dummyFS,
       context,
+      log,
     ).run().execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/other/path', 'hellow world, how is {{ _.other }}?')
+    expect(log.entries()[0]!.details['source']).toBe('some/path')
+    expect(log.entries()[0]!.details['dest']).toBe('some/other/path')
   })
 })
