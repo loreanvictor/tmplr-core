@@ -53,6 +53,8 @@ test('all necessary stuff are exported.', () => {
   expect(Choices).not.toBe(undefined)
   expect(ChoicesExecution).not.toBe(undefined)
   expect(<Choice>{}).not.toBe(undefined)
+  expect(From).not.toBe(undefined)
+  expect(FromExecution).not.toBe(undefined)
   expect(Path).not.toBe(undefined)
   expect(PathExecution).not.toBe(undefined)
   expect(<ChangeDetails>{}).not.toBe(undefined)
