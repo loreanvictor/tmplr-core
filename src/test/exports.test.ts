@@ -8,7 +8,7 @@ import {
   providerFromFunctions,
   FileSystem, AccessError,
   Eval, EvalExecution, Prompt, PromptExecution, Value, ValueExecution, Choices, ChoicesExecution, Choice,
-  Path, PathExecution,
+  Path, PathExecution, From, FromExecution,
   ChangeDetails, ChangeLogEntry, ChangeLog, ChangeExecution, Read, ReadExecution, Run, RunExecution, ParseFn,
   Steps, StepsExecution, If, IfExecution, Copy, CopyExecution, Update, UpdateExecution, Degit, DegitExecution,
   Remove, RemoveExecution, Use, UseExecution,
