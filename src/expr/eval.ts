@@ -1,7 +1,6 @@
 import { Runnable } from '../runnable'
 import { Execution } from '../execution'
 import { EvaluationContext } from '../eval/context'
-import { Steps } from '../command/steps'
 
 
 export class EvalExecution extends Execution<string> {
@@ -24,7 +23,7 @@ export class Eval extends Runnable<string> {
   constructor(
     readonly expr: string,
     readonly context: EvaluationContext,
-    readonly steps?: Steps,
+    readonly steps?: Runnable<void>,
   ) { super() }
 
   run() {
