@@ -6,7 +6,7 @@ describe(Prompt, () => {
   test('reads a value from given IO interface.', async () => {
     jest.useFakeTimers()
 
-    const exec = new Prompt('What is the value?').run()
+    const exec = new Prompt(new Value('What is the value?')).run()
 
     const setMessage = jest.fn()
     const setDefault = jest.fn()
@@ -40,7 +40,7 @@ describe(Prompt, () => {
 
   test('evaluates default values.', async () => {
     const exec = new Prompt(
-      'What is the value?',
+      new Value('What is the value?'),
       new Value('Some default value'),
     ).run()
 

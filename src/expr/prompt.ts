@@ -15,10 +15,11 @@ export class PromptExecution extends IOExecution<string, PromptIO> {
   ) { super() }
 
   async run() {
+    const msg = await this.delegate(this.prompt.msg.run())
     const _default = this.prompt._default ? (await this.delegate(this.prompt._default.run())) : undefined
     const io = await this.connect()
 
-    io.setMessage(this.prompt.msg)
+    io.setMessage(msg)
     if (_default) {
       io.setDefault(_default)
     }
@@ -33,7 +34,7 @@ export class PromptExecution extends IOExecution<string, PromptIO> {
 
 export class Prompt extends Runnable<string> {
   constructor(
-    readonly msg: string,
+    readonly msg: Runnable<string>,
     readonly _default?: Runnable<string>,
   ) { super() }
 

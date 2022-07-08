@@ -9,6 +9,7 @@ import { ChangeLog } from './change'
 import { EvaluationContext } from '../eval'
 
 
+//TODO: add filename to parseFn parameters
 export type ParseFn = (
   content: string,
   scope: Scope,

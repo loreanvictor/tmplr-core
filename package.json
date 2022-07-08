@@ -1,6 +1,6 @@
 {
   "name": "@tmplr/core",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "core concepts and commands for tmplr",
   "main": "dist/commonjs/index.js",
   "module": "dist/es/index.js",
