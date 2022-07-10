@@ -1,4 +1,7 @@
+import { basename, dirname } from 'path'
+
 import { Read } from '../read'
+import { Steps } from '../steps'
 import { Value } from '../../expr/value'
 import { Eval } from '../../expr/eval'
 import { FileSystem } from '../../filesystem'
@@ -13,6 +16,8 @@ describe(Run, () => {
     const dummyFS: FileSystem = {
       root: '/home',
       scope: '/home',
+      basename: (path: string) => basename(path),
+      dirname: (path: string) => dirname(path),
       absolute: (path: string) => path,
       cd: jest.fn(() => dummyFS2),
       read: jest.fn(() => Promise.resolve('content of the file')),
@@ -22,7 +27,7 @@ describe(Run, () => {
       fetch: jest.fn(() => Promise.resolve()),
     }
 
-    const dummyFS2 = { ...dummyFS }
+    const dummyFS2 = { ...dummyFS, root: '/home/some', scope: '/home' }
     const scope = scopeFromProviders({
       things: providerFromFunctions({ foo: async () => 'bar' }),
     }, '_', { foo: 'bar' })
@@ -35,17 +40,24 @@ describe(Run, () => {
       expect(filesystem).toBe(dummyFS2)
       received = s
 
-      return new Read(
-        'out',
-        new Eval('hellow {{ args.a }}', ctx),
-        s
-      )
+      return new Steps([
+        new Read(
+          'out',
+          new Eval('hellow {{ args.a }}', ctx),
+          s
+        ),
+        new Read(
+          'out2',
+          new Eval('{{ filesystem.scope }} - {{ filesystem.rootdir }}', ctx),
+          s
+        )
+      ])
     }
 
     const run = new Run(
       new Value('some/file.yml'),
       { a: new Value('world') },
-      { b: 'out' },
+      { b: 'out', c: 'out2' },
       parse,
       dummyFS,
       scope,
@@ -55,9 +67,13 @@ describe(Run, () => {
 
     await run.run().execute()
 
+    expect(dummyFS.cd).toHaveBeenCalledWith('some')
     await expect(scope.has('b')).resolves.toBe(true)
     await expect(scope.get('b')).resolves.toBe('hellow world')
+    await expect(scope.has('c')).resolves.toBe(true)
+    await expect(scope.get('c')).resolves.toBe('/home - some')
     await expect(scope.has('out')).resolves.toBe(false)
+    await expect(scope.has('out2')).resolves.toBe(false)
 
     await expect(received.has('foo')).resolves.toBe(true)
     await expect(received.has('things.foo')).resolves.toBe(true)

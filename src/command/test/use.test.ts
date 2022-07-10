@@ -1,3 +1,5 @@
+import { basename, dirname } from 'path'
+
 import { Read } from '../read'
 import { Value } from '../../expr/value'
 import { Eval } from '../../expr/eval'
@@ -15,6 +17,8 @@ describe(Use, () => {
     const dummyFS: FileSystem = {
       root: '/home',
       scope: '/home',
+      dirname: (path: string) => dirname(path),
+      basename: (path: string) => basename(path),
       absolute: (path: string) => path,
       cd: jest.fn(() => dummyFS2),
       read: jest.fn(async file => {

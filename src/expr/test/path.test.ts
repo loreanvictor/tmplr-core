@@ -1,3 +1,5 @@
+import { dirname, basename } from 'path'
+
 import { FileSystem } from '../../filesystem'
 import { Value } from '../value'
 import { Path } from '../path'
@@ -9,6 +11,8 @@ describe(Path, () => {
       read: jest.fn(),
       write: jest.fn(),
       absolute: jest.fn(path => '/abs/' + path),
+      basename: jest.fn(path => basename(path)),
+      dirname: jest.fn(path => dirname(path)),
       rm: jest.fn(),
       access: jest.fn(),
       fetch: jest.fn(),

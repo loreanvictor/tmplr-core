@@ -2,7 +2,7 @@ import { Subject, combine, pipe, of, prepend, tap, finalize, observe, Source } f
 
 import { Execution, Stack } from './execution'
 import { Runnable } from './runnable'
-import { cached, CachedFunction, Scope } from './scope'
+import { cached, CachedFunction, ProviderNamespace, Scope } from './scope'
 
 
 export class SandBox extends Execution<void> {
@@ -13,6 +13,7 @@ export class SandBox extends Execution<void> {
     readonly inputs: {[name: string]: Runnable<string>},
     readonly outputs: {[name: string]: string},
     readonly scope: Scope,
+    readonly additionalProviders: ProviderNamespace = {},
   ) { super() }
 
   async run() {
@@ -23,6 +24,7 @@ export class SandBox extends Execution<void> {
     })
 
     const scope = this.scope.sub({
+      ...this.additionalProviders,
       args: {
         async has(key: string) { return key in cache },
         get(key: string) { return cache[key]! },

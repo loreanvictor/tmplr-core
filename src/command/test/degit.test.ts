@@ -10,6 +10,8 @@ describe(Degit, () => {
       read: jest.fn(),
       write: jest.fn(),
       absolute: jest.fn(),
+      basename: jest.fn(),
+      dirname: jest.fn(),
       rm: jest.fn(),
       access: jest.fn(),
       fetch: jest.fn(),

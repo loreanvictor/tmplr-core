@@ -1,3 +1,5 @@
+import { basename, dirname } from 'path'
+
 import { ChangeLog, ChangeExecution } from '../change'
 import { FileSystem } from '../../filesystem'
 
@@ -13,6 +15,8 @@ describe(ChangeExecution, () => {
       scope: 'scope',
       root: 'root',
       absolute: jest.fn(() => 'absolute'),
+      basename: jest.fn(path => basename(path)),
+      dirname: jest.fn(path => dirname(path)),
       cd: jest.fn(() => dummyFS),
       fetch: jest.fn(() => Promise.resolve()),
     }

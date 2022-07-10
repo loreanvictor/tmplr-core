@@ -12,6 +12,8 @@ describe(Update, () => {
       read: jest.fn(async () => 'hellow {{ _.name }}, how is {{ _.other }}?'),
       write: jest.fn(),
       absolute: jest.fn(),
+      dirname: jest.fn(),
+      basename: jest.fn(),
       rm: jest.fn(),
       access: jest.fn(),
       fetch: jest.fn(),
