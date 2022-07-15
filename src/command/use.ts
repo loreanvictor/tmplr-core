@@ -24,6 +24,7 @@ export class UseExecution extends Execution<void> {
         new SandBox(
           scope => this.use.parse(
             content,
+            recipe,
             scope,
             new EvaluationContext(scope, this.use.context.pipes),
             filesystem,

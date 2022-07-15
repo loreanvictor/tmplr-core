@@ -8,9 +8,9 @@ import { EvaluationContext } from '../eval'
 import { filesystemProvider } from '../filesystem/provider'
 
 
-//TODO: add filename to parseFn parameters
 export type ParseFn = (
   content: string,
+  filename: string,
   scope: Scope,
   context: EvaluationContext,
   filesystem: FileSystem,
@@ -30,6 +30,7 @@ export class RunExecution extends Execution<void> {
       new SandBox(
         scope => this._run.parse(
           content,
+          target,
           scope,
           new EvaluationContext(scope, this._run.context.pipes),
           filesystem,

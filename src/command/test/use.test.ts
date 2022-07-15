@@ -45,8 +45,9 @@ describe(Use, () => {
 
     let received: Scope = {} as any
 
-    const parse = (content: string, s: Scope, ctx: EvaluationContext, filesystem: FileSystem) => {
+    const parse = (content: string, filename: string, s: Scope, ctx: EvaluationContext, filesystem: FileSystem) => {
       expect(content).toBe('content of the file')
+      expect(filename).toBe('recipe.yml')
       expect(filesystem).toBe(dummyFS2)
       received = s
 
