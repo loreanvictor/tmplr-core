@@ -35,12 +35,15 @@ export abstract class ChangeExecution extends Execution<void> {
   async run() {
     const details = await this.commit()
     if (this.log) {
-      this.log.commit({
-        change: this,
-        details,
-      })
+      if (Array.isArray(details)) {
+        const log = this.log
+        const change = this
+        details.forEach(detail => log.commit({ change, details: detail }))
+      } else {
+        this.log.commit({ change: this, details })
+      }
     }
   }
 
-  protected abstract commit(): Promise<ChangeDetails>
+  protected abstract commit(): Promise<ChangeDetails | ChangeDetails[]>
 }

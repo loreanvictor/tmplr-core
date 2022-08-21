@@ -10,6 +10,7 @@ export interface FileSystem {
   basename(path: string): string
   dirname(path: string): string
   cd(path: string): FileSystem
+  ls(path: string): Promise<string[]>
 
   fetch(remote: string, dest: string): Promise<void>
 }

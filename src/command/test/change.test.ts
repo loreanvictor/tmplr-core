@@ -12,6 +12,7 @@ describe(ChangeExecution, () => {
       write: jest.fn(() => Promise.resolve()),
       access: jest.fn(() => Promise.resolve()),
       rm: jest.fn(() => Promise.resolve()),
+      ls: jest.fn(() => Promise.resolve([])),
       scope: 'scope',
       root: 'root',
       absolute: jest.fn(() => 'absolute'),

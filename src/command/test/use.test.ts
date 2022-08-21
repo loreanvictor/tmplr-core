@@ -20,6 +20,7 @@ describe(Use, () => {
       dirname: (path: string) => dirname(path),
       basename: (path: string) => basename(path),
       absolute: (path: string) => path,
+      ls: async () => [],
       cd: jest.fn(() => dummyFS2),
       read: jest.fn(async file => {
         expect(file).toMatch(/recipe\.yml$/)

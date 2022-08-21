@@ -13,6 +13,7 @@ describe(filesystemProvider, () => {
       basename: (path: string) => basename(path),
       dirname: (path: string) => dirname(path),
       absolute: (path: string) => path,
+      ls: async () => [],
       cd: jest.fn(() => dummyFS),
       read: jest.fn(() => Promise.resolve('content of the file')),
       write: jest.fn(() => Promise.resolve()),

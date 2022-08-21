@@ -14,6 +14,7 @@ describe(Path, () => {
       basename: jest.fn(path => basename(path)),
       dirname: jest.fn(path => dirname(path)),
       rm: jest.fn(),
+      ls: jest.fn(),
       access: jest.fn(),
       fetch: jest.fn(),
       cd: jest.fn(),

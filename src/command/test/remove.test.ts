@@ -12,6 +12,7 @@ describe(Remove, () => {
       absolute: jest.fn(),
       basename: jest.fn(),
       dirname: jest.fn(),
+      ls: jest.fn(),
       rm: jest.fn(),
       access: jest.fn(),
       fetch: jest.fn(),

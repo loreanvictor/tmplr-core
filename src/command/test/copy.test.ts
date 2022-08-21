@@ -11,6 +11,7 @@ describe(Copy, () => {
     const dummyFS: FileSystem = {
       read: jest.fn(async () => 'hellow {{ _.name }}, how is {{ _.other }}?'),
       write: jest.fn(),
+      ls: jest.fn(),
       absolute: jest.fn(),
       basename: jest.fn(),
       dirname: jest.fn(),

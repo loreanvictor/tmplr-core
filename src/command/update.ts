@@ -1,3 +1,5 @@
+import match from 'minimatch'
+
 import { Runnable } from '../runnable'
 import { FileSystem } from '../filesystem'
 import { EvaluationContext } from '../eval'
@@ -9,11 +11,23 @@ export class UpdateExecution extends ChangeExecution {
 
   async commit() {
     const target = await this.delegate(this.update.target.run())
-    const content = await this.update.filesystem.read(target)
-    const updated = await this.update.context.evaluate(content)
-    await this.update.filesystem.write(target, updated)
+    const updates: {target: string, content: string, updated: string}[] = []
 
-    return { target, content, updated }
+    await Promise.all(
+      (await this.update.filesystem.ls(this.update.filesystem.root))
+        .filter(path => match(path, target))
+        .map(path => {
+          return (async () => {
+            const content = await this.update.filesystem.read(path)
+            const updated = await this.update.context.evaluate(content)
+            await this.update.filesystem.write(path, updated)
+
+            updates.push({ target: path, content, updated })
+          })()
+        })
+    )
+
+    return updates
   }
 }
 
