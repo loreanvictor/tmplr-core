@@ -16,14 +16,12 @@ export class UpdateExecution extends ChangeExecution {
     await Promise.all(
       (await this.update.filesystem.ls(this.update.filesystem.root))
         .filter(path => match(path, target))
-        .map(path => {
-          return (async () => {
-            const content = await this.update.filesystem.read(path)
-            const updated = await this.update.context.evaluate(content)
-            await this.update.filesystem.write(path, updated)
+        .map(async path => {
+          const content = await this.update.filesystem.read(path)
+          const updated = await this.update.context.evaluate(content)
+          await this.update.filesystem.write(path, updated)
 
-            updates.push({ target: path, content, updated })
-          })()
+          updates.push({ target: path, content, updated })
         })
     )
 
