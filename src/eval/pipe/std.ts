@@ -41,6 +41,17 @@ function lowerCase(str: string) {
 }
 
 
+function matches(str: string, param: string) {
+  if (param[0] === '/' && param[param.length - 1] === '/') {
+    const regex = new RegExp(param.slice(1, -1))
+
+    return regex.test(str) ? str : ''
+  } else {
+    return param === str ? str : ''
+  }
+}
+
+
 export const STANDARD_PIPES = {
   camelCase: (str: string) => camelCase(str),
   'Capital Case': (str: string) => capitalCase(str),
@@ -57,4 +68,5 @@ export const STANDARD_PIPES = {
   lowercase: lowerCase,
   skip,
   trim,
+  matches,
 }
