@@ -18,5 +18,15 @@ of tmplr in following areas:
 - Creating alternative syntax parsers / serializers for tmplr
 - Creating programs similar to tmplr with custom commands
 
+<br>
+
+## Relevant Packages
+
+- [@tmplr/node](https://github.com/loreanvictor/tmplr-node): Node bindings for tmplr
+- [@tmplr/react](https://github.com/loreanvictor/tmplr-react): Create React interfaces for tmplr / tmplr-like programs
+- [@tmplr/yaml-parser](https://github.com/loreanvictor/tmplr-yaml-parser): A YAML parser for parsing tmplr / tmplr-like template files
+- [@tmplr/jest](https://github.com/loreanvictor/tmplr-jest): Utilities for testing tmplr / tmplr-like applications and libraries
+
+<br><br>
 
 ⚠️⚠️ WORK IN PROGRESS. DO NOT USE. ⚠️⚠️
