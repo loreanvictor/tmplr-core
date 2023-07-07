@@ -1,3 +1,5 @@
+import match from 'minimatch'
+
 import { Runnable } from '../runnable'
 import { FileSystem } from '../filesystem'
 import { ChangeExecution, ChangeLog } from './change'
@@ -8,9 +10,18 @@ export class RemoveExecution extends ChangeExecution {
 
   async commit() {
     const target = await this.delegate(this.remove.target.run())
-    await this.remove.filesystem.rm(target)
+    const removals: { target: string }[] = []
 
-    return { target }
+    await Promise.all(
+      (await this.remove.filesystem.ls(this.remove.filesystem.root))
+        .filter(path => match(path, target))
+        .map(async path => {
+          await this.remove.filesystem.rm(path)
+          removals.push({ target: path })
+        })
+    )
+
+    return removals
   }
 }
 
