@@ -1,4 +1,4 @@
-import { normalize } from 'path'
+import { isAbsolute, join, normalize } from 'path'
 
 import { FileSystem } from '../../filesystem'
 import { Value } from '../../expr/value'
@@ -73,25 +73,25 @@ describe(Remove, () => {
 
   test('can handle relative paths.', async () => {
     const files = [
-      'some/path.js',
-      'some/other/path.js',
-      'some/path.ts',
-      'other/path/stuff.js',
+      '/user/some/path.js',
+      '/user/some/other/path.js',
+      '/user/some/path.ts',
+      '/user/other/path/stuff.js',
     ]
 
     const dummyFS: FileSystem = {
       read: jest.fn(),
       write: jest.fn(),
-      absolute: jest.fn(x => normalize(x)),
+      absolute: jest.fn(x => normalize(isAbsolute(x) ? x : join('/user', x))),
       basename: jest.fn(),
       dirname: jest.fn(),
-      ls: jest.fn(async () => files),
+      ls: jest.fn(async () => files.map(file => file.slice(6))),
       rm: jest.fn(async (file) => { files.splice(files.indexOf(file), 1) }),
       access: jest.fn(),
       fetch: jest.fn(),
       cd: jest.fn(),
-      scope: '',
-      root: '',
+      scope: '/user',
+      root: '/user',
     }
 
     await new Remove(
@@ -101,8 +101,8 @@ describe(Remove, () => {
     ).run().execute()
 
     expect(files).toEqual([
-      'some/path.ts',
-      'other/path/stuff.js'
+      '/user/some/path.ts',
+      '/user/other/path/stuff.js'
     ])
   })
 })

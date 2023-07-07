@@ -14,6 +14,7 @@ export class RemoveExecution extends ChangeExecution {
 
     await Promise.all(
       (await this.remove.filesystem.ls(this.remove.filesystem.root))
+        .map(path => this.remove.filesystem.absolute(path))
         .filter(path => minimatch(path, target))
         .map(async path => {
           await this.remove.filesystem.rm(path)

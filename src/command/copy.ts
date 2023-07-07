@@ -21,6 +21,7 @@ export class CopyExecution extends ChangeExecution {
 
     await Promise.all(
       (await this.copy.filesystem.ls(this.copy.filesystem.root))
+        .map(path => this.copy.filesystem.absolute(path))
         .filter(path => matcher.match(path))
         .map(async src => {
           const content = await this.copy.filesystem.read(src)

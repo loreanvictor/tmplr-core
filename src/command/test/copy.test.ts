@@ -5,7 +5,7 @@ import { EvaluationContext } from '../../eval'
 import { scopeFromProviders } from '../../scope'
 import { Copy } from '../copy'
 import { ChangeLog } from '../change'
-import { normalize } from 'path'
+import { isAbsolute, join, normalize } from 'path'
 
 
 describe(Copy, () => {
@@ -85,25 +85,25 @@ describe(Copy, () => {
 
   test('can handle relative paths.', async () => {
     const files = {
-      'some/path.js': 'aaa',
-      'some/other/path.js': 'bbb {{ _.name }}',
-      'other/stuff.js': 'ccc',
-      'some/stuff.ts': 'ddd',
+      '/user/some/path.js': 'aaa',
+      '/user/some/other/path.js': 'bbb {{ _.name }}',
+      '/user/other/stuff.js': 'ccc',
+      '/user/some/stuff.ts': 'ddd',
     }
 
     const dummyFS: FileSystem = {
       read: jest.fn(async (path) => files[path]),
       write: jest.fn(async (path, content) => { files[path] = content }),
-      ls: jest.fn(async () => Object.keys(files)),
-      absolute: jest.fn(x => normalize(x)),
+      ls: jest.fn(async () => Object.keys(files).map(file => file.slice(6))),
+      absolute: jest.fn(x => normalize(isAbsolute(x) ? x : join('/user', x))),
       basename: jest.fn(),
       dirname: jest.fn(),
       rm: jest.fn(),
       access: jest.fn(),
       fetch: jest.fn(),
       cd: jest.fn(),
-      scope: '',
-      root: '',
+      scope: '/user',
+      root: '/user',
     }
 
     const scope = scopeFromProviders({}, '_', { name: 'world' })
@@ -118,9 +118,9 @@ describe(Copy, () => {
       log,
     ).run().execute()
 
-    expect(files['target/path.js']).toBe('aaa')
-    expect(files['target/other/path.js']).toBe('bbb world')
-    expect(files['target/stuff.ts']).toBeUndefined()
-    expect(files['target/other/stuff.js']).toBeUndefined()
+    expect(files['/user/target/path.js']).toBe('aaa')
+    expect(files['/user/target/other/path.js']).toBe('bbb world')
+    expect(files['/user/target/stuff.ts']).toBeUndefined()
+    expect(files['/user/target/other/stuff.js']).toBeUndefined()
   })
 })

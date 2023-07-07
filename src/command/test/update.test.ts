@@ -1,4 +1,4 @@
-import { normalize } from 'path'
+import { normalize, join, isAbsolute } from 'path'
 
 import { FileSystem } from '../../filesystem'
 import { Value } from '../../expr/value'
@@ -77,22 +77,22 @@ describe(Update, () => {
 
   test('can properly handle relative paths as well.', async () => {
     const files = {
-      'some/path': 'hellow {{ _.name }}!',
+      '/user/some/path': 'hellow {{ _.name }}!',
     }
 
     const dummyFS: FileSystem = {
       read: jest.fn(async path => files[path]),
       write: jest.fn(async (path, content) => { files[path] = content }),
-      absolute: jest.fn(x => normalize(x)),
+      absolute: jest.fn(x => normalize(isAbsolute(x) ? x : join('/user', x))),
       dirname: jest.fn(),
       basename: jest.fn(),
-      ls: jest.fn(async () => Object.keys(files)),
+      ls: jest.fn(async () => Object.keys(files).map(x => x.slice(6))),
       rm: jest.fn(),
       access: jest.fn(),
       fetch: jest.fn(),
       cd: jest.fn(),
-      scope: '',
-      root: '',
+      scope: '/user',
+      root: '/user',
     }
 
     const scope = scopeFromProviders({}, '_', { name: 'world' })
@@ -106,6 +106,6 @@ describe(Update, () => {
       log,
     ).run().execute()
 
-    expect(files['some/path']).toBe('hellow world!')
+    expect(files['/user/some/path']).toBe('hellow world!')
   })
 })
