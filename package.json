@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "change-case": "^4.1.2",
-    "minimatch": "^5.1.0",
+    "minimatch": "^9.0.3",
     "streamlets": "^0.5.0"
   }
 }

@@ -1,4 +1,4 @@
-import match from 'minimatch'
+import { minimatch } from 'minimatch'
 
 import { Runnable } from '../runnable'
 import { FileSystem } from '../filesystem'
@@ -14,7 +14,7 @@ export class RemoveExecution extends ChangeExecution {
 
     await Promise.all(
       (await this.remove.filesystem.ls(this.remove.filesystem.root))
-        .filter(path => match(path, target))
+        .filter(path => minimatch(path, target))
         .map(async path => {
           await this.remove.filesystem.rm(path)
           removals.push({ target: path })

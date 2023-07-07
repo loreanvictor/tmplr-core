@@ -1,3 +1,5 @@
+import { Minimatch, sep } from 'minimatch'
+
 import { Runnable } from '../runnable'
 import { FileSystem } from '../filesystem'
 import { EvaluationContext } from '../eval'
@@ -10,11 +12,28 @@ export class CopyExecution extends ChangeExecution {
   async commit() {
     const source = await this.delegate(this.copy.source.run())
     const dest = await this.delegate(this.copy.dest.run())
-    const content = await this.copy.filesystem.read(source)
-    const updated = await this.copy.context.evaluate(content)
-    await this.copy.filesystem.write(dest, updated)
 
-    return { source, dest, content, updated }
+    const copies: {source: string, dest: string, content: string, updated: string}[] = []
+    const matcher = new Minimatch(source)
+    const split = source.split(sep)
+    const index = split.findIndex(part => new Minimatch(part).hasMagic())
+    const prefix = split.slice(0, index > 0 ? index : split.length).join(sep)
+
+    await Promise.all(
+      (await this.copy.filesystem.ls(this.copy.filesystem.root))
+        .filter(path => matcher.match(path))
+        .map(async src => {
+          const content = await this.copy.filesystem.read(src)
+          const updated = await this.copy.context.evaluate(content)
+
+          const dst = dest + src.replace(prefix, '')
+          await this.copy.filesystem.write(dst, updated)
+
+          copies.push({ source: src, dest: dst, content, updated })
+        })
+    )
+
+    return copies
   }
 }
 

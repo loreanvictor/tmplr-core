@@ -1,4 +1,4 @@
-import match from 'minimatch'
+import { minimatch } from 'minimatch'
 
 import { Runnable } from '../runnable'
 import { FileSystem } from '../filesystem'
@@ -15,7 +15,7 @@ export class UpdateExecution extends ChangeExecution {
 
     await Promise.all(
       (await this.update.filesystem.ls(this.update.filesystem.root))
-        .filter(path => match(path, target))
+        .filter(path => minimatch(path, target))
         .map(async path => {
           const content = await this.update.filesystem.read(path)
           const updated = await this.update.context.evaluate(content)
