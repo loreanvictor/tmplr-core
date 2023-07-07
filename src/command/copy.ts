@@ -10,8 +10,8 @@ export class CopyExecution extends ChangeExecution {
   constructor(readonly copy: Copy) { super(copy.filesystem,copy.log) }
 
   async commit() {
-    const source = await this.delegate(this.copy.source.run())
-    const dest = await this.delegate(this.copy.dest.run())
+    const source = this.copy.filesystem.absolute(await this.delegate(this.copy.source.run()))
+    const dest = this.copy.filesystem.absolute(await this.delegate(this.copy.dest.run()))
 
     const copies: {source: string, dest: string, content: string, updated: string}[] = []
     const matcher = new Minimatch(source)

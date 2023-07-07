@@ -1,3 +1,5 @@
+import { normalize } from 'path'
+
 import { FileSystem } from '../../filesystem'
 import { Value } from '../../expr/value'
 import { EvaluationContext } from '../../eval'
@@ -11,7 +13,7 @@ describe(Update, () => {
     const dummyFS: FileSystem = {
       read: jest.fn(async () => 'hellow {{ _.name }}, how is {{ _.other }}?'),
       write: jest.fn(),
-      absolute: jest.fn(),
+      absolute: jest.fn(x => normalize(x)),
       dirname: jest.fn(),
       basename: jest.fn(),
       ls: jest.fn(async () => ['some/path', 'some/other/path', 'some/third-file']),
@@ -19,8 +21,8 @@ describe(Update, () => {
       access: jest.fn(),
       fetch: jest.fn(),
       cd: jest.fn(),
-      scope: 'scope',
-      root: 'root',
+      scope: '',
+      root: '',
     }
 
     const scope = scopeFromProviders({}, '_', { name: 'world' })
@@ -43,7 +45,7 @@ describe(Update, () => {
     const dummyFS: FileSystem = {
       read: jest.fn(async () => 'hellow {{ _.name }}, how is {{ _.other }}?'),
       write: jest.fn(),
-      absolute: jest.fn(),
+      absolute: jest.fn(x => normalize(x)),
       dirname: jest.fn(),
       basename: jest.fn(),
       ls: jest.fn(async () => ['some/path', 'some/other/path', 'some/third-file']),
@@ -51,8 +53,8 @@ describe(Update, () => {
       access: jest.fn(),
       fetch: jest.fn(),
       cd: jest.fn(),
-      scope: 'scope',
-      root: 'root',
+      scope: '',
+      root: '',
     }
 
     const scope = scopeFromProviders({}, '_', { name: 'world' })
@@ -73,4 +75,37 @@ describe(Update, () => {
     expect(log.entries().length).toBe(2)
   })
 
+  test('can properly handle relative paths as well.', async () => {
+    const files = {
+      'some/path': 'hellow {{ _.name }}!',
+    }
+
+    const dummyFS: FileSystem = {
+      read: jest.fn(async path => files[path]),
+      write: jest.fn(async (path, content) => { files[path] = content }),
+      absolute: jest.fn(x => normalize(x)),
+      dirname: jest.fn(),
+      basename: jest.fn(),
+      ls: jest.fn(async () => Object.keys(files)),
+      rm: jest.fn(),
+      access: jest.fn(),
+      fetch: jest.fn(),
+      cd: jest.fn(),
+      scope: '',
+      root: '',
+    }
+
+    const scope = scopeFromProviders({}, '_', { name: 'world' })
+    const context = new EvaluationContext(scope.vars)
+    const log = new ChangeLog()
+
+    await new Update(
+      new Value('./some/*'),
+      dummyFS,
+      context,
+      log,
+    ).run().execute()
+
+    expect(files['some/path']).toBe('hellow world!')
+  })
 })

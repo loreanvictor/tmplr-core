@@ -1,3 +1,5 @@
+import { normalize } from 'path'
+
 import { FileSystem } from '../../filesystem'
 import { Value } from '../../expr/value'
 import { Remove } from '../remove'
@@ -9,7 +11,7 @@ describe(Remove, () => {
     const dummyFS: FileSystem = {
       read: jest.fn(),
       write: jest.fn(),
-      absolute: jest.fn(),
+      absolute: jest.fn(x => normalize(x)),
       basename: jest.fn(),
       dirname: jest.fn(),
       ls: jest.fn(() => Promise.resolve(['some/path', 'some/other/path'])),
@@ -17,8 +19,8 @@ describe(Remove, () => {
       access: jest.fn(),
       fetch: jest.fn(),
       cd: jest.fn(),
-      scope: 'scope',
-      root: 'root',
+      scope: '',
+      root: '',
     }
 
     const log = new ChangeLog()
@@ -45,7 +47,7 @@ describe(Remove, () => {
     const dummyFS: FileSystem = {
       read: jest.fn(),
       write: jest.fn(),
-      absolute: jest.fn(),
+      absolute: jest.fn(x => normalize(x)),
       basename: jest.fn(),
       dirname: jest.fn(),
       ls: jest.fn(async () => files),
@@ -53,12 +55,47 @@ describe(Remove, () => {
       access: jest.fn(),
       fetch: jest.fn(),
       cd: jest.fn(),
-      scope: 'scope',
-      root: 'root',
+      scope: '',
+      root: '',
     }
 
     await new Remove(
       new Value('some/**/*.js'),
+      dummyFS,
+      new ChangeLog(),
+    ).run().execute()
+
+    expect(files).toEqual([
+      'some/path.ts',
+      'other/path/stuff.js'
+    ])
+  })
+
+  test('can handle relative paths.', async () => {
+    const files = [
+      'some/path.js',
+      'some/other/path.js',
+      'some/path.ts',
+      'other/path/stuff.js',
+    ]
+
+    const dummyFS: FileSystem = {
+      read: jest.fn(),
+      write: jest.fn(),
+      absolute: jest.fn(x => normalize(x)),
+      basename: jest.fn(),
+      dirname: jest.fn(),
+      ls: jest.fn(async () => files),
+      rm: jest.fn(async (file) => { files.splice(files.indexOf(file), 1) }),
+      access: jest.fn(),
+      fetch: jest.fn(),
+      cd: jest.fn(),
+      scope: '',
+      root: '',
+    }
+
+    await new Remove(
+      new Value('./some/**/*.js'),
       dummyFS,
       new ChangeLog(),
     ).run().execute()

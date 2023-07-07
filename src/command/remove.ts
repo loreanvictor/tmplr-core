@@ -9,7 +9,7 @@ export class RemoveExecution extends ChangeExecution {
   constructor(readonly remove: Remove) { super(remove.filesystem, remove.log) }
 
   async commit() {
-    const target = await this.delegate(this.remove.target.run())
+    const target = this.remove.filesystem.absolute(await this.delegate(this.remove.target.run()))
     const removals: { target: string }[] = []
 
     await Promise.all(

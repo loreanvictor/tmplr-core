@@ -10,8 +10,10 @@ export class UpdateExecution extends ChangeExecution {
   constructor(readonly update: Update) { super(update.filesystem, update.log) }
 
   async commit() {
-    const target = await this.delegate(this.update.target.run())
+    const target = this.filesystem.absolute(await this.delegate(this.update.target.run()))
     const updates: {target: string, content: string, updated: string}[] = []
+
+    console.log(target)
 
     await Promise.all(
       (await this.update.filesystem.ls(this.update.filesystem.root))
