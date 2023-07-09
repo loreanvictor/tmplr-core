@@ -1,4 +1,4 @@
-import { minimatch } from 'minimatch'
+import { Minimatch } from 'minimatch'
 
 import { Runnable } from '../runnable'
 import { FileSystem } from '../filesystem'
@@ -12,15 +12,22 @@ export class RemoveExecution extends ChangeExecution {
     const target = this.remove.filesystem.absolute(await this.delegate(this.remove.target.run()))
     const removals: { target: string }[] = []
 
-    await Promise.all(
-      (await this.remove.filesystem.ls(this.remove.filesystem.root))
-        .map(path => this.remove.filesystem.absolute(path))
-        .filter(path => minimatch(path, target))
-        .map(async path => {
-          await this.remove.filesystem.rm(path)
-          removals.push({ target: path })
-        })
-    )
+    const matcher = new Minimatch(target)
+
+    if (matcher.hasMagic()) {
+      await Promise.all(
+        (await this.remove.filesystem.ls(this.remove.filesystem.root))
+          .map(path => this.remove.filesystem.absolute(path))
+          .filter(path => matcher.match(path))
+          .map(async path => {
+            await this.remove.filesystem.rm(path)
+            removals.push({ target: path })
+          })
+      )
+    } else {
+      await this.remove.filesystem.rm(target)
+      removals.push({ target })
+    }
 
     return removals
   }

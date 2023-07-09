@@ -105,4 +105,29 @@ describe(Remove, () => {
       '/user/other/path/stuff.js'
     ])
   })
+
+  test('can remove folders.', async () => {
+    const dummyFS: FileSystem = {
+      read: jest.fn(),
+      absolute: jest.fn(x => x),
+      write: jest.fn(),
+      basename: jest.fn(),
+      dirname: jest.fn(),
+      ls: jest.fn(async () => ['some/path', 'some/other/path', 'some/other/path2']),
+      rm: jest.fn(),
+      access: jest.fn(),
+      fetch: jest.fn(),
+      cd: jest.fn(),
+      scope: '',
+      root: '',
+    }
+
+    await new Remove(
+      new Value('some/other'),
+      dummyFS,
+      new ChangeLog(),
+    ).run().execute()
+
+    expect(dummyFS.rm).toHaveBeenCalledWith('some/other')
+  })
 })
