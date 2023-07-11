@@ -32,6 +32,7 @@ describe(Copy, () => {
     await new Copy(
       new Value('some/path'),
       new Value('some/other/path'),
+      false,
       dummyFS,
       context,
       log,
@@ -72,6 +73,7 @@ describe(Copy, () => {
     await new Copy(
       new Value('some/**/*.js'),
       new Value('target'),
+      false,
       dummyFS,
       context,
       log,
@@ -113,6 +115,7 @@ describe(Copy, () => {
     await new Copy(
       new Value('./some/**/*.js'),
       new Value('./target'),
+      false,
       dummyFS,
       context,
       log,
@@ -122,5 +125,85 @@ describe(Copy, () => {
     expect(files['/user/target/other/path.js']).toBe('bbb world')
     expect(files['/user/target/stuff.ts']).toBeUndefined()
     expect(files['/user/target/other/stuff.js']).toBeUndefined()
+  })
+
+  test('ignores hidden paths when hidden is false.', async () => {
+    const files = {
+      '/user/some/path.js': 'aaa',
+      '/user/some/.other/path.js': 'bbb',
+      '/user/some/.other-stuff.js': 'ccc'
+    }
+
+    const dummyFS: FileSystem = {
+      read: jest.fn(async (path) => files[path]),
+      write: jest.fn(async (path, content) => { files[path] = content }),
+      ls: jest.fn(async () => Object.keys(files).map(file => file.slice(6))),
+      absolute: jest.fn(x => normalize(isAbsolute(x) ? x : join('/user', x))),
+      basename: jest.fn(),
+      dirname: jest.fn(),
+      rm: jest.fn(),
+      access: jest.fn(),
+      fetch: jest.fn(),
+      cd: jest.fn(),
+      scope: '/user',
+      root: '/user',
+    }
+
+    const scope = scopeFromProviders({}, '_', { name: 'world' })
+    const context = new EvaluationContext(scope.vars)
+    const log = new ChangeLog()
+
+    await new Copy(
+      new Value('./some/**/*.js'),
+      new Value('./target'),
+      false,
+      dummyFS,
+      context,
+      log,
+    ).run().execute()
+
+    expect(files['/user/target/path.js']).toBe('aaa')
+    expect(files['/user/target/.other/path.js']).toBeUndefined()
+    expect(files['/user/target/.other-stuff.js']).toBeUndefined()
+  })
+
+  test('copies hidden paths when hidden is true.', async () => {
+    const files = {
+      '/user/some/path.js': 'aaa',
+      '/user/some/.other/path.js': 'bbb',
+      '/user/some/.other-stuff.js': 'ccc'
+    }
+
+    const dummyFS: FileSystem = {
+      read: jest.fn(async (path) => files[path]),
+      write: jest.fn(async (path, content) => { files[path] = content }),
+      ls: jest.fn(async () => Object.keys(files).map(file => file.slice(6))),
+      absolute: jest.fn(x => normalize(isAbsolute(x) ? x : join('/user', x))),
+      basename: jest.fn(),
+      dirname: jest.fn(),
+      rm: jest.fn(),
+      access: jest.fn(),
+      fetch: jest.fn(),
+      cd: jest.fn(),
+      scope: '/user',
+      root: '/user',
+    }
+
+    const scope = scopeFromProviders({}, '_', { name: 'world' })
+    const context = new EvaluationContext(scope.vars)
+    const log = new ChangeLog()
+
+    await new Copy(
+      new Value('./some/**/*.js'),
+      new Value('./target'),
+      true,
+      dummyFS,
+      context,
+      log,
+    ).run().execute()
+
+    expect(files['/user/target/path.js']).toBe('aaa')
+    expect(files['/user/target/.other/path.js']).toBe('bbb')
+    expect(files['/user/target/.other-stuff.js']).toBe('ccc')
   })
 })

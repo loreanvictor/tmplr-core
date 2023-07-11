@@ -31,6 +31,7 @@ describe(Update, () => {
 
     await new Update(
       new Value('some/path'),
+      false,
       dummyFS,
       context,
       log,
@@ -63,6 +64,7 @@ describe(Update, () => {
 
     await new Update(
       new Value('some/*'),
+      false,
       dummyFS,
       context,
       log,
@@ -101,11 +103,78 @@ describe(Update, () => {
 
     await new Update(
       new Value('./some/*'),
+      false,
       dummyFS,
       context,
       log,
     ).run().execute()
 
     expect(files['/user/some/path']).toBe('hellow world!')
+  })
+
+  test('ignores hidden files when hidden is set to false.', async () => {
+    const dummyFS: FileSystem = {
+      read: jest.fn(async () => 'hellow {{ _.name }}, how is {{ _.other }}?'),
+      write: jest.fn(),
+      absolute: jest.fn(x => normalize(x)),
+      dirname: jest.fn(),
+      basename: jest.fn(),
+      ls: jest.fn(async () => ['some/path', 'some/.other/path', 'some/.third-file']),
+      rm: jest.fn(),
+      access: jest.fn(),
+      fetch: jest.fn(),
+      cd: jest.fn(),
+      scope: '',
+      root: '',
+    }
+
+    const scope = scopeFromProviders({}, '_', { name: 'world' })
+    const context = new EvaluationContext(scope.vars)
+    const log = new ChangeLog()
+
+    await new Update(
+      new Value('some/**/*'),
+      false,
+      dummyFS,
+      context,
+      log,
+    ).run().execute()
+
+    expect(dummyFS.write).toHaveBeenCalledWith('some/path', 'hellow world, how is {{ _.other }}?')
+    expect(dummyFS.write).not.toHaveBeenCalledWith('some/.other/path', 'hellow world, how is {{ _.other }}?')
+    expect(dummyFS.write).not.toHaveBeenCalledWith('some/.third-file', 'hellow world, how is {{ _.other }}?')
+  })
+
+  test('updates hidden files when hidden is set to true.', async () => {
+    const dummyFS: FileSystem = {
+      read: jest.fn(async () => 'hellow {{ _.name }}, how is {{ _.other }}?'),
+      write: jest.fn(),
+      absolute: jest.fn(x => normalize(x)),
+      dirname: jest.fn(),
+      basename: jest.fn(),
+      ls: jest.fn(async () => ['some/path', 'some/.other/path', 'some/.third-file']),
+      rm: jest.fn(),
+      access: jest.fn(),
+      fetch: jest.fn(),
+      cd: jest.fn(),
+      scope: '',
+      root: '',
+    }
+
+    const scope = scopeFromProviders({}, '_', { name: 'world' })
+    const context = new EvaluationContext(scope.vars)
+    const log = new ChangeLog()
+
+    await new Update(
+      new Value('some/**/*'),
+      true,
+      dummyFS,
+      context,
+      log,
+    ).run().execute()
+
+    expect(dummyFS.write).toHaveBeenCalledWith('some/path', 'hellow world, how is {{ _.other }}?')
+    expect(dummyFS.write).toHaveBeenCalledWith('some/.other/path', 'hellow world, how is {{ _.other }}?')
+    expect(dummyFS.write).toHaveBeenCalledWith('some/.third-file', 'hellow world, how is {{ _.other }}?')
   })
 })

@@ -13,12 +13,10 @@ export class UpdateExecution extends ChangeExecution {
     const target = this.filesystem.absolute(await this.delegate(this.update.target.run()))
     const updates: {target: string, content: string, updated: string}[] = []
 
-    console.log(target)
-
     await Promise.all(
       (await this.update.filesystem.ls(this.update.filesystem.root))
         .map(path => this.update.filesystem.absolute(path))
-        .filter(path => minimatch(path, target))
+        .filter(path => minimatch(path, target, { dot: this.update.hidden }))
         .map(async path => {
           const content = await this.update.filesystem.read(path)
           const updated = await this.update.context.evaluate(content)
@@ -36,6 +34,7 @@ export class UpdateExecution extends ChangeExecution {
 export class Update extends Runnable<void> {
   constructor(
     readonly target: Runnable<string>,
+    readonly hidden: boolean,
     readonly filesystem: FileSystem,
     readonly context: EvaluationContext,
     readonly log: ChangeLog,

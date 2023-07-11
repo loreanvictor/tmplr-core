@@ -12,7 +12,7 @@ export class RemoveExecution extends ChangeExecution {
     const target = this.remove.filesystem.absolute(await this.delegate(this.remove.target.run()))
     const removals: { target: string }[] = []
 
-    const matcher = new Minimatch(target)
+    const matcher = new Minimatch(target, { dot: this.remove.hidden })
 
     if (matcher.hasMagic()) {
       await Promise.all(
@@ -37,6 +37,7 @@ export class RemoveExecution extends ChangeExecution {
 export class Remove extends Runnable<void> {
   constructor(
     readonly target: Runnable<string>,
+    readonly hidden: boolean,
     readonly filesystem: FileSystem,
     readonly log: ChangeLog,
   ) { super() }

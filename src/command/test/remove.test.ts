@@ -27,6 +27,7 @@ describe(Remove, () => {
 
     await new Remove(
       new Value('some/path'),
+      false,
       dummyFS,
       log,
     ).run().execute()
@@ -61,6 +62,7 @@ describe(Remove, () => {
 
     await new Remove(
       new Value('some/**/*.js'),
+      false,
       dummyFS,
       new ChangeLog(),
     ).run().execute()
@@ -96,6 +98,7 @@ describe(Remove, () => {
 
     await new Remove(
       new Value('./some/**/*.js'),
+      false,
       dummyFS,
       new ChangeLog(),
     ).run().execute()
@@ -124,10 +127,67 @@ describe(Remove, () => {
 
     await new Remove(
       new Value('some/other'),
+      false,
       dummyFS,
       new ChangeLog(),
     ).run().execute()
 
     expect(dummyFS.rm).toHaveBeenCalledWith('some/other')
+  })
+
+  test('ignores hidden files when hidden is false.', async () => {
+    const dummyFS: FileSystem = {
+      read: jest.fn(),
+      absolute: jest.fn(x => x),
+      write: jest.fn(),
+      basename: jest.fn(),
+      dirname: jest.fn(),
+      ls: jest.fn(async () => ['some/path', 'some/.other/path', 'some/.third-thing']),
+      rm: jest.fn(),
+      access: jest.fn(),
+      fetch: jest.fn(),
+      cd: jest.fn(),
+      scope: '',
+      root: '',
+    }
+
+    await new Remove(
+      new Value('some/**/*'),
+      false,
+      dummyFS,
+      new ChangeLog(),
+    ).run().execute()
+
+    expect(dummyFS.rm).toHaveBeenCalledWith('some/path')
+    expect(dummyFS.rm).not.toHaveBeenCalledWith('some/.other/path')
+    expect(dummyFS.rm).not.toHaveBeenCalledWith('some/.third-thing')
+  })
+
+  test('removes hidden files when hidden is true.', async () => {
+    const dummyFS: FileSystem = {
+      read: jest.fn(),
+      absolute: jest.fn(x => x),
+      write: jest.fn(),
+      basename: jest.fn(),
+      dirname: jest.fn(),
+      ls: jest.fn(async () => ['some/path', 'some/.other/path', 'some/.third-thing']),
+      rm: jest.fn(),
+      access: jest.fn(),
+      fetch: jest.fn(),
+      cd: jest.fn(),
+      scope: '',
+      root: '',
+    }
+
+    await new Remove(
+      new Value('some/**/*'),
+      true,
+      dummyFS,
+      new ChangeLog(),
+    ).run().execute()
+
+    expect(dummyFS.rm).toHaveBeenCalledWith('some/path')
+    expect(dummyFS.rm).toHaveBeenCalledWith('some/.other/path')
+    expect(dummyFS.rm).toHaveBeenCalledWith('some/.third-thing')
   })
 })

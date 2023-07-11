@@ -14,7 +14,7 @@ export class CopyExecution extends ChangeExecution {
     const dest = this.copy.filesystem.absolute(await this.delegate(this.copy.dest.run()))
 
     const copies: {source: string, dest: string, content: string, updated: string}[] = []
-    const matcher = new Minimatch(source)
+    const matcher = new Minimatch(source, { dot: this.copy.hidden })
     const split = source.split(sep)
     const index = split.findIndex(part => new Minimatch(part).hasMagic())
     const prefix = split.slice(0, index > 0 ? index : split.length).join(sep)
@@ -43,6 +43,7 @@ export class Copy extends Runnable<void> {
   constructor(
     readonly source: Runnable<string>,
     readonly dest: Runnable<string>,
+    readonly hidden: boolean,
     readonly filesystem: FileSystem,
     readonly context: EvaluationContext,
     readonly log: ChangeLog,
