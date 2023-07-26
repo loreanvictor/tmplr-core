@@ -78,5 +78,20 @@ describe(EvaluationContext, () => {
     const res = await context.evaluate('Hellow {{ vars.name | UPPERCASE }} ({{ vars.name | PascalCase }})')
     expect(res).toBe('Hellow JOHN DOE (JohnDoe)')
   })
+
+  test('pipes can have arguments with ":" inside.', async () => {
+    const vars = providerFromFunctions({
+      'name': cached(async () => 'john Doe'),
+    })
+
+    const source = sourceFromProviders({ vars }, {})
+    const context = new EvaluationContext(source, {
+      'some pipe': (str: string, arg: string) => `${str} ${arg}`,
+      'other-pipe': (str: string, arg: string) => `${arg}-${str}`,
+    })
+
+    const res = await context.evaluate('Hellow {{ vars.name | some pipe : arg: with : inside | other-pipe : X }}')
+    expect(res).toBe('Hellow X-john Doe arg: with : inside')
+  })
 })
 

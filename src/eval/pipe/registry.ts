@@ -7,7 +7,9 @@ export class PipeRegistry {
   ) { }
 
   evaluate(expr: string) {
-    const [name, param] = expr.split(':').map(_ => _.trim())
+    const [_name, ..._param] = expr.split(':')
+    const name = _name?.trim()
+    const param = _param.join(':').trim()
 
     if (!(name! in this.pipes)) {
       throw new Error('Invalid pipe: ' + name)
