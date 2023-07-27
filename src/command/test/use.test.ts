@@ -54,7 +54,7 @@ describe(Use, () => {
 
       return new Read(
         'out',
-        new Eval('hellow {{ args.a }}', ctx),
+        new Eval('hellow {{ args.a }} - {{ filesystem.scopedir }}', ctx),
         s
       )
     }
@@ -78,7 +78,7 @@ describe(Use, () => {
     expect(dummyFS.rm).toHaveBeenCalled()
 
     await expect(scope.has('b')).resolves.toBe(true)
-    await expect(scope.get('b')).resolves.toBe('hellow world')
+    await expect(scope.get('b')).resolves.toBe('hellow world - home')
     await expect(scope.has('out')).resolves.toBe(false)
 
     await expect(received.has('foo')).resolves.toBe(true)

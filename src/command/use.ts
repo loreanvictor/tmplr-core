@@ -6,6 +6,7 @@ import { FileSystem } from '../filesystem'
 import { SandBox } from '../sandbox'
 import { ChangeLog } from './change'
 import { ParseFn } from './run'
+import { filesystemProvider } from '../filesystem/provider'
 
 
 export class UseExecution extends Execution<void> {
@@ -33,6 +34,9 @@ export class UseExecution extends Execution<void> {
           this.use.inputs,
           this.use.outputs,
           this.use.scope,
+          {
+            filesystem: filesystemProvider(filesystem),
+          }
         )
       )
     } finally {
