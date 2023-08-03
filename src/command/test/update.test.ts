@@ -98,13 +98,11 @@ describe(Update, () => {
 
     const scope = scopeFromProviders({}, '_', { name: 'world' })
     const context = new EvaluationContext(scope.vars)
-    const log = new ChangeLog()
 
     await new Update(
       new Value('./some/*'),
       dummyFS,
       context,
-      { log }
     ).run(new Flow()).execute()
 
     expect(files['/user/some/path']).toBe('hellow world!')

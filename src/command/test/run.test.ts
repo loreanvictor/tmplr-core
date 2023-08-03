@@ -9,6 +9,20 @@ import { providerFromFunctions, Scope, scopeFromProviders } from '../../scope'
 import { Run } from '../run'
 import { EvaluationContext } from '../../eval/context'
 import { Flow } from '../../flow'
+import { Execution } from '../../execution'
+import { Runnable } from '../../runnable'
+
+
+class DummyExec extends Execution<void> {
+  constructor(readonly _run: DummyRunnable, flow: Flow) { super(flow) }
+  async run() { this._run.fn() }
+}
+
+
+class DummyRunnable extends Runnable<void> {
+  constructor(readonly fn: () => {}) { super() }
+  run(flow: Flow) { return new DummyExec(this, flow) }
+}
 
 
 describe(Run, () => {
@@ -81,5 +95,41 @@ describe(Run, () => {
     await expect(received.has('foo')).resolves.toBe(true)
     await expect(received.has('things.foo')).resolves.toBe(true)
     await expect(received.has('baz')).resolves.toBe(false)
+  })
+
+  test('can be run without inputs and outputs.', async() => {
+    const dummyFS: FileSystem = {
+      root: '/',
+      scope: '/',
+      basename: jest.fn(),
+      dirname: jest.fn(),
+      absolute: jest.fn(),
+      ls: jest.fn(),
+      cd: jest.fn(),
+      read: jest.fn(() => Promise.resolve('content of the file')),
+      write: jest.fn(),
+      access: jest.fn(),
+      rm: jest.fn(),
+      fetch: jest.fn(),
+    }
+
+    const target = jest.fn()
+
+    const parse = () => new Steps([
+      new DummyRunnable(target),
+      new DummyRunnable(target),
+    ])
+
+    const scope = scopeFromProviders({}, '_', {})
+
+    await new Run(
+      new Value('some/file.yml'),
+      parse,
+      dummyFS,
+      scope,
+      new EvaluationContext(scope),
+    ).run(new Flow()).execute()
+
+    expect(target).toHaveBeenCalledTimes(2)
   })
 })

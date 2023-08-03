@@ -8,6 +8,7 @@ import { providerFromFunctions, Scope, scopeFromProviders } from '../../scope'
 import { Use } from '../use'
 import { EvaluationContext } from '../../eval/context'
 import { Flow } from '../../flow'
+import { Steps } from '../steps'
 
 
 describe(Use, () => {
@@ -85,5 +86,36 @@ describe(Use, () => {
     await expect(received.has('foo')).resolves.toBe(true)
     await expect(received.has('things.foo')).resolves.toBe(true)
     await expect(received.has('baz')).resolves.toBe(false)
+  })
+
+  test('without any recipe, assumes .tmplr.yml', async () => {
+    const dummyFS: FileSystem = {
+      root: '', scope: '',
+      dirname: jest.fn(), basename: jest.fn(), absolute: jest.fn(),
+      ls: jest.fn(), read: jest.fn(), write: jest.fn(), access: jest.fn(), rm: jest.fn(),
+      fetch: jest.fn(),
+
+      cd: () => dummyFS
+    }
+
+    const scope = scopeFromProviders({}, '_', { foo: 'bar' })
+    const parse = jest.fn(() => new Steps([]))
+
+    await new Use(
+      new Value('some:repo'),
+      parse,
+      dummyFS,
+      scope,
+      new EvaluationContext(scope),
+    ).run(new Flow()).execute()
+
+    expect(parse).toHaveBeenCalledWith(
+      undefined,
+      '.tmplr.yml',
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      undefined
+    )
   })
 })
