@@ -8,7 +8,6 @@ import { FileSystem } from '../../filesystem'
 import { providerFromFunctions, Scope, scopeFromProviders } from '../../scope'
 import { Run } from '../run'
 import { EvaluationContext } from '../../eval/context'
-import { ChangeLog } from '../change'
 import { Flow } from '../../flow'
 
 
@@ -59,13 +58,14 @@ describe(Run, () => {
 
     const run = new Run(
       new Value('some/file.yml'),
-      { a: new Value('world') },
-      { b: 'out', c: 'out2' },
       parse,
       dummyFS,
       scope,
       new EvaluationContext(scope),
-      new ChangeLog(),
+      {
+        inputs: { a: new Value('world') },
+        outputs: { b: 'out', c: 'out2' },
+      }
     )
 
     await run.run(new Flow()).execute()

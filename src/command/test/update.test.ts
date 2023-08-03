@@ -32,10 +32,9 @@ describe(Update, () => {
 
     await new Update(
       new Value('some/path'),
-      false,
       dummyFS,
       context,
-      log,
+      { log }
     ).run(new Flow()).execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/path', 'hellow world, how is {{ _.other }}?')
@@ -65,10 +64,9 @@ describe(Update, () => {
 
     await new Update(
       new Value('some/*'),
-      false,
       dummyFS,
       context,
-      log,
+      { log }
     ).run(new Flow()).execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/path', 'hellow world, how is {{ _.other }}?')
@@ -104,10 +102,9 @@ describe(Update, () => {
 
     await new Update(
       new Value('./some/*'),
-      false,
       dummyFS,
       context,
-      log,
+      { log }
     ).run(new Flow()).execute()
 
     expect(files['/user/some/path']).toBe('hellow world!')
@@ -135,10 +132,9 @@ describe(Update, () => {
 
     await new Update(
       new Value('some/**/*'),
-      false,
       dummyFS,
       context,
-      log,
+      { log }
     ).run(new Flow()).execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/path', 'hellow world, how is {{ _.other }}?')
@@ -168,10 +164,9 @@ describe(Update, () => {
 
     await new Update(
       new Value('some/**/*'),
-      true,
       dummyFS,
       context,
-      log,
+      { log, hidden: true }
     ).run(new Flow()).execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/path', 'hellow world, how is {{ _.other }}?')

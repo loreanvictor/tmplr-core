@@ -12,8 +12,8 @@ export class EvalExecution extends Execution<string> {
 
 
   async run() {
-    if (this._eval.steps) {
-      await this.delegate(this._eval.steps.run(this.flow))
+    if (this._eval.options.steps) {
+      await this.delegate(this._eval.options.steps.run(this.flow))
     }
 
     return await this._eval.context.evaluate(this._eval.expr)
@@ -21,11 +21,15 @@ export class EvalExecution extends Execution<string> {
 }
 
 
+export interface EvalExtras {
+  steps?: Runnable<void>
+}
+
 export class Eval extends Runnable<string> {
   constructor(
     readonly expr: string,
     readonly context: EvaluationContext,
-    readonly steps?: Runnable<void>,
+    readonly options: EvalExtras = {},
   ) { super() }
 
   run(flow: Flow) {

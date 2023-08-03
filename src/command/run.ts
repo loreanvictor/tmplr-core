@@ -15,7 +15,7 @@ export type ParseFn = (
   scope: Scope,
   context: EvaluationContext,
   filesystem: FileSystem,
-  changelog: ChangeLog,
+  changelog?: ChangeLog,
 ) => Runnable<void>
 
 
@@ -35,10 +35,10 @@ export class RunExecution extends Execution<void> {
           scope,
           new EvaluationContext(scope, this._run.context.pipes),
           filesystem,
-          this._run.changelog,
+          this._run.options.log,
         ),
-        this._run.inputs,
-        this._run.outputs,
+        this._run.options.inputs || {},
+        this._run.options.outputs || {},
         this._run.scope,
         {
           filesystem: filesystemProvider(filesystem),
@@ -49,16 +49,21 @@ export class RunExecution extends Execution<void> {
 }
 
 
+export interface RunExtras {
+  inputs?: {[name: string]: Runnable<string>}
+  outputs?: {[name: string]: string}
+  log?: ChangeLog
+}
+
+
 export class Run extends Runnable<void> {
   constructor(
     readonly target: Runnable<string>,
-    readonly inputs: {[name: string]: Runnable<string>},
-    readonly outputs: {[name: string]: string},
     readonly parse: ParseFn,
     readonly filesystem: FileSystem,
     readonly scope: Scope,
     readonly context: EvaluationContext,
-    readonly changelog: ChangeLog,
+    readonly options: RunExtras = {},
   ) { super() }
 
   run(flow: Flow) {

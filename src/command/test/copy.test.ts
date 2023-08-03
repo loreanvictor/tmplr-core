@@ -33,10 +33,9 @@ describe(Copy, () => {
     await new Copy(
       new Value('some/path'),
       new Value('some/other/path'),
-      false,
       dummyFS,
       context,
-      log,
+      { log }
     ).run(new Flow()).execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/other/path', 'hellow world, how is {{ _.other }}?')
@@ -69,15 +68,12 @@ describe(Copy, () => {
 
     const scope = scopeFromProviders({}, '_', { name: 'world' })
     const context = new EvaluationContext(scope.vars)
-    const log = new ChangeLog()
 
     await new Copy(
       new Value('some/**/*.js'),
       new Value('target'),
-      false,
       dummyFS,
-      context,
-      log,
+      context
     ).run(new Flow()).execute()
 
     expect(files['target/path.js']).toBe('aaa')
@@ -111,15 +107,12 @@ describe(Copy, () => {
 
     const scope = scopeFromProviders({}, '_', { name: 'world' })
     const context = new EvaluationContext(scope.vars)
-    const log = new ChangeLog()
 
     await new Copy(
       new Value('./some/**/*.js'),
       new Value('./target'),
-      false,
       dummyFS,
-      context,
-      log,
+      context
     ).run(new Flow()).execute()
 
     expect(files['/user/target/path.js']).toBe('aaa')
@@ -152,15 +145,12 @@ describe(Copy, () => {
 
     const scope = scopeFromProviders({}, '_', { name: 'world' })
     const context = new EvaluationContext(scope.vars)
-    const log = new ChangeLog()
 
     await new Copy(
       new Value('./some/**/*.js'),
       new Value('./target'),
-      false,
       dummyFS,
-      context,
-      log,
+      context
     ).run(new Flow()).execute()
 
     expect(files['/user/target/path.js']).toBe('aaa')
@@ -192,15 +182,13 @@ describe(Copy, () => {
 
     const scope = scopeFromProviders({}, '_', { name: 'world' })
     const context = new EvaluationContext(scope.vars)
-    const log = new ChangeLog()
 
     await new Copy(
       new Value('./some/**/*.js'),
       new Value('./target'),
-      true,
       dummyFS,
       context,
-      log,
+      { hidden: true }
     ).run(new Flow()).execute()
 
     expect(files['/user/target/path.js']).toBe('aaa')

@@ -15,7 +15,7 @@ describe(From, () => {
 
   test('uses the fallback if the value does not exist.', async () => {
     const source = sourceFromProviders({})
-    const from = new From('stuff.foo', source, new Value('bar'))
+    const from = new From('stuff.foo', source, { fallback: new Value('bar') })
 
     await expect(from.run(new Flow()).execute()).resolves.toBe('bar')
   })

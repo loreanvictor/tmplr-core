@@ -7,13 +7,13 @@ import { Flow } from '../flow'
 
 
 export class RemoveExecution extends ChangeExecution {
-  constructor(readonly remove: Remove, flow: Flow) { super(flow, remove.filesystem, remove.log) }
+  constructor(readonly remove: Remove, flow: Flow) { super(flow, remove.filesystem, remove.options.log) }
 
   async commit() {
     const target = this.remove.filesystem.absolute(await this.delegate(this.remove.target.run(this.flow)))
     const removals: { target: string }[] = []
 
-    const matcher = new Minimatch(target, { dot: this.remove.hidden })
+    const matcher = new Minimatch(target, { dot: this.remove.options.hidden })
 
     if (matcher.hasMagic()) {
       await Promise.all(
@@ -35,12 +35,17 @@ export class RemoveExecution extends ChangeExecution {
 }
 
 
+export interface RemoveExtras {
+  hidden?: boolean
+  log?: ChangeLog
+}
+
+
 export class Remove extends Runnable<void> {
   constructor(
     readonly target: Runnable<string>,
-    readonly hidden: boolean,
     readonly filesystem: FileSystem,
-    readonly log: ChangeLog,
+    readonly options: RemoveExtras = {}
   ) { super() }
 
   run(flow: Flow) { return new RemoveExecution(this, flow) }

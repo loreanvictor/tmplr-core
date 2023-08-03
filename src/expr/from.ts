@@ -10,8 +10,8 @@ export class FromExecution extends Execution<string> {
   async run() {
     if (await this.from.source.has(this.from.name)) {
       return await this.from.source.get(this.from.name)
-    } if (this.from.fallback) {
-      return await this.delegate(this.from.fallback.run(this.flow))
+    } if (this.from.options.fallback) {
+      return await this.delegate(this.from.options.fallback.run(this.flow))
     } else {
       return ''
     }
@@ -19,11 +19,16 @@ export class FromExecution extends Execution<string> {
 }
 
 
+export interface FromExtras {
+  fallback?: Runnable<string>
+}
+
+
 export class From extends Runnable<string> {
   constructor(
     readonly name: string,
     readonly source: Source,
-    readonly fallback?: Runnable<string>,
+    readonly options: FromExtras = {},
   ) { super() }
 
   run(flow: Flow) { return new FromExecution(this, flow) }

@@ -11,8 +11,8 @@ export class IfExecution extends Execution<string> {
 
     if (condition && condition.length > 0) {
       return (await this.delegate<string | void>(this.if_.then.run(this.flow))) || ''
-    } else if (this.if_._else) {
-      return (await this.delegate<string | void>(this.if_._else.run(this.flow))) || ''
+    } else if (this.if_.options.else) {
+      return (await this.delegate<string | void>(this.if_.options.else.run(this.flow))) || ''
     } else {
       return ''
     }
@@ -20,11 +20,16 @@ export class IfExecution extends Execution<string> {
 }
 
 
+export interface IfExtras {
+  else?: Runnable<string> | Runnable<void>
+}
+
+
 export class If extends Runnable<string> {
   constructor(
     readonly condition: Runnable<string>,
     readonly then: Runnable<string> | Runnable<void>,
-    readonly _else?: Runnable<string> | Runnable<void>,
+    readonly options: IfExtras = {},
   ) { super() }
 
   run(flow: Flow) { return new IfExecution(this, flow) }

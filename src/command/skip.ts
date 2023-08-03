@@ -10,14 +10,19 @@ export class SkipExecution extends Execution<void> {
   ) { super(flow) }
 
   async run() {
-    this.flow.break(this.skip.cascade)
+    this.flow.break(this.skip.options.cascade)
   }
+}
+
+
+export interface SkipExtras {
+  cascade?: boolean
 }
 
 
 export class Skip extends Runnable<void> {
   constructor(
-    readonly cascade: boolean,
+    readonly options: SkipExtras = {},
   ) { super() }
 
   run(flow: Flow) { return new SkipExecution(this, flow) }

@@ -42,7 +42,7 @@ describe(Prompt, () => {
   test('evaluates default values.', async () => {
     const exec = new Prompt(
       new Value('What is the value?'),
-      new Value('Some default value'),
+      { default: new Value('Some default value') },
     ).run(new Flow())
 
     const setDefault = jest.fn()

@@ -7,7 +7,6 @@ import { FileSystem } from '../../filesystem'
 import { providerFromFunctions, Scope, scopeFromProviders } from '../../scope'
 import { Use } from '../use'
 import { EvaluationContext } from '../../eval/context'
-import { ChangeLog } from '../change'
 import { Flow } from '../../flow'
 
 
@@ -62,14 +61,15 @@ describe(Use, () => {
 
     const use = new Use(
       new Value('some:repo'),
-      new Value('recipe.yml'),
-      { a: new Value('world') },
-      { b: 'out' },
       parse,
       dummyFS,
       scope,
       new EvaluationContext(scope),
-      new ChangeLog(),
+      {
+        recipe: new Value('recipe.yml'),
+        inputs: { a: new Value('world') },
+        outputs: { b: 'out' },
+      }
     )
 
     await use.run(new Flow()).execute()

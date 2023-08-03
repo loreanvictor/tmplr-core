@@ -5,7 +5,7 @@ import { Flow } from '../flow'
 
 
 export class DegitExecution extends ChangeExecution {
-  constructor(readonly degit: Degit, flow: Flow) { super(flow, degit.filesystem, degit.log) }
+  constructor(readonly degit: Degit, flow: Flow) { super(flow, degit.filesystem, degit.options.log) }
 
   async commit() {
     const source = await this.delegate(this.degit.source.run(this.flow))
@@ -17,12 +17,17 @@ export class DegitExecution extends ChangeExecution {
 }
 
 
+export interface DegitExtras {
+  log?: ChangeLog
+}
+
+
 export class Degit extends Runnable<void> {
   constructor(
     readonly source: Runnable<string>,
     readonly target: Runnable<string>,
     readonly filesystem: FileSystem,
-    readonly log: ChangeLog,
+    readonly options: DegitExtras = {},
   ) { super() }
 
   run(flow: Flow) { return new DegitExecution(this, flow) }

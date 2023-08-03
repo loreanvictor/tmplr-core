@@ -36,7 +36,7 @@ describe(If, () => {
   test('runs the else runnable if the given condition evaluates to an empty string.', async () => {
     const _then = new DummyRunnable(jest.fn())
     const _else = new DummyRunnable(jest.fn())
-    const _if = new If(new Value(''), _then, _else)
+    const _if = new If(new Value(''), _then, { else: _else })
 
     await _if.run(new Flow()).execute()
     expect(_then.fn).not.toHaveBeenCalled()
@@ -53,7 +53,7 @@ describe(If, () => {
     const val2 = await new If(
       new Value(''),
       new Value('then'),
-      new Value('else')
+      { else: new Value('else') }
     ).run(new Flow()).execute()
     expect(val2).toBe('else')
 
@@ -66,7 +66,7 @@ describe(If, () => {
     const val4 = await new If(
       new Value('not_empty'),
       new DummyRunnable(() => {}),
-      new Value('else')
+      { else: new Value('else') }
     ).run(new Flow()).execute()
     expect(val4).toBe('')
   })

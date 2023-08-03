@@ -33,7 +33,7 @@ describe(Eval, () => {
       new Read('var2', new Value('Jill'), store),
     ])
 
-    const exec = new Eval('{{ var1 | lowercase }} vs {{ var2 | trim: ll | UPPERCASE }}', context, steps)
+    const exec = new Eval('{{ var1 | lowercase }} vs {{ var2 | trim: ll | UPPERCASE }}', context, { steps })
       .run(new Flow())
     const res = await exec.execute()
 

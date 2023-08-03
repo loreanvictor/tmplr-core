@@ -28,7 +28,7 @@ describe(Degit, () => {
       new Value('some:repo'),
       new Value('some/path'),
       dummyFS,
-      log,
+      { log }
     ).run(new Flow()).execute()
 
     expect(dummyFS.fetch).toHaveBeenCalledWith('some:repo', 'some/path')

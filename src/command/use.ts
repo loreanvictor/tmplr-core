@@ -18,7 +18,9 @@ export class UseExecution extends Execution<void> {
 
     try {
       await this.use.filesystem.fetch(target, dest)
-      const recipe = await this.delegate(this.use.recipe.run(this.flow))
+      const recipe = this.use.options.recipe ?
+        await this.delegate(this.use.options.recipe.run(this.flow))
+        : '.tmplr.yml'
       const filesystem = this.use.filesystem.cd(dest)
       const content = await filesystem.read(recipe)
 
@@ -30,10 +32,10 @@ export class UseExecution extends Execution<void> {
             scope,
             new EvaluationContext(scope, this.use.context.pipes),
             filesystem,
-            this.use.changelog
+            this.use.options.log
           ),
-          this.use.inputs,
-          this.use.outputs,
+          this.use.options.inputs || {},
+          this.use.options.outputs || {},
           this.use.scope,
           {
             filesystem: filesystemProvider(filesystem),
@@ -47,17 +49,22 @@ export class UseExecution extends Execution<void> {
 }
 
 
+export interface UseExtras {
+  inputs?: {[name: string]: Runnable<string>}
+  outputs?: {[name: string]: string}
+  recipe?: Runnable<string>
+  log?: ChangeLog
+}
+
+
 export class Use extends Runnable<void> {
   constructor(
     readonly target: Runnable<string>,
-    readonly recipe: Runnable<string>,
-    readonly inputs: {[name: string]: Runnable<string>},
-    readonly outputs: {[name: string]: string},
     readonly parse: ParseFn,
     readonly filesystem: FileSystem,
     readonly scope: Scope,
     readonly context: EvaluationContext,
-    readonly changelog: ChangeLog,
+    readonly options: UseExtras = {},
   ) { super()}
 
   run(flow: Flow) { return new UseExecution(this, flow) }

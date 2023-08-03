@@ -8,14 +8,14 @@ import { Flow } from '../flow'
 
 
 export class CopyExecution extends ChangeExecution {
-  constructor(readonly copy: Copy, flow: Flow) { super(flow, copy.filesystem, copy.log) }
+  constructor(readonly copy: Copy, flow: Flow) { super(flow, copy.filesystem, copy.options.log) }
 
   async commit() {
     const source = this.copy.filesystem.absolute(await this.delegate(this.copy.source.run(this.flow)))
     const dest = this.copy.filesystem.absolute(await this.delegate(this.copy.dest.run(this.flow)))
 
     const copies: {source: string, dest: string, content: string, updated: string}[] = []
-    const matcher = new Minimatch(source, { dot: this.copy.hidden })
+    const matcher = new Minimatch(source, { dot: this.copy.options.hidden })
     const split = source.split(sep)
     const index = split.findIndex(part => new Minimatch(part).hasMagic())
     const prefix = split.slice(0, index > 0 ? index : split.length).join(sep)
@@ -40,14 +40,19 @@ export class CopyExecution extends ChangeExecution {
 }
 
 
+export interface CopyExtras {
+  hidden?: boolean
+  log?: ChangeLog
+}
+
+
 export class Copy extends Runnable<void> {
   constructor(
     readonly source: Runnable<string>,
     readonly dest: Runnable<string>,
-    readonly hidden: boolean,
     readonly filesystem: FileSystem,
     readonly context: EvaluationContext,
-    readonly log: ChangeLog,
+    readonly options: CopyExtras = {}
   ) { super() }
 
   run(flow: Flow) { return new CopyExecution(this, flow) }

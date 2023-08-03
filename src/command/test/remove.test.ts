@@ -28,9 +28,8 @@ describe(Remove, () => {
 
     await new Remove(
       new Value('some/path'),
-      false,
       dummyFS,
-      log,
+      { log }
     ).run(new Flow()).execute()
 
     expect(dummyFS.rm).toHaveBeenCalledWith('some/path')
@@ -63,9 +62,7 @@ describe(Remove, () => {
 
     await new Remove(
       new Value('some/**/*.js'),
-      false,
       dummyFS,
-      new ChangeLog(),
     ).run(new Flow()).execute()
 
     expect(files).toEqual([
@@ -99,9 +96,7 @@ describe(Remove, () => {
 
     await new Remove(
       new Value('./some/**/*.js'),
-      false,
       dummyFS,
-      new ChangeLog(),
     ).run(new Flow()).execute()
 
     expect(files).toEqual([
@@ -128,9 +123,7 @@ describe(Remove, () => {
 
     await new Remove(
       new Value('some/other'),
-      false,
       dummyFS,
-      new ChangeLog(),
     ).run(new Flow()).execute()
 
     expect(dummyFS.rm).toHaveBeenCalledWith('some/other')
@@ -154,9 +147,7 @@ describe(Remove, () => {
 
     await new Remove(
       new Value('some/**/*'),
-      false,
       dummyFS,
-      new ChangeLog(),
     ).run(new Flow()).execute()
 
     expect(dummyFS.rm).toHaveBeenCalledWith('some/path')
@@ -182,9 +173,8 @@ describe(Remove, () => {
 
     await new Remove(
       new Value('some/**/*'),
-      true,
       dummyFS,
-      new ChangeLog(),
+      { hidden: true },
     ).run(new Flow()).execute()
 
     expect(dummyFS.rm).toHaveBeenCalledWith('some/path')

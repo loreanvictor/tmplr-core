@@ -18,7 +18,9 @@ export class PromptExecution extends IOExecution<string, PromptIO> {
 
   async run() {
     const msg = await this.delegate(this.prompt.msg.run(this.flow))
-    const _default = this.prompt._default ? (await this.delegate(this.prompt._default.run(this.flow))) : undefined
+    const _default = this.prompt.options.default ?
+      (await this.delegate(this.prompt.options.default.run(this.flow)))
+      : undefined
     const io = await this.connect()
 
     io.setMessage(msg)
@@ -34,10 +36,15 @@ export class PromptExecution extends IOExecution<string, PromptIO> {
 }
 
 
+export interface PromptExtras {
+  default?: Runnable<string>
+}
+
+
 export class Prompt extends Runnable<string> {
   constructor(
     readonly msg: Runnable<string>,
-    readonly _default?: Runnable<string>,
+    readonly options: PromptExtras = {},
   ) { super() }
 
   run(flow: Flow) {

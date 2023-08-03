@@ -32,7 +32,7 @@ describe(Skip, () => {
     await new Steps([
       new DummyStep(() => seen.push('first')),
       new DummyStep(() => seen.push('second')),
-      new Skip(false),
+      new Skip(),
       new DummyStep(() => seen.push('third')),
     ]).run(new Flow()).execute()
 
@@ -47,7 +47,7 @@ describe(Skip, () => {
       new DummyStep(() => seen.push('second')),
       new Steps([
         new DummyStep(() => seen.push('third')),
-        new Skip(false),
+        new Skip(),
         new DummyStep(() => seen.push('fourth')),
       ]),
       new DummyStep(() => seen.push('fifth')),
@@ -64,7 +64,7 @@ describe(Skip, () => {
       new DummyStep(() => seen.push('second')),
       new Steps([
         new DummyStep(() => seen.push('third')),
-        new Skip(true),
+        new Skip({ cascade: true }),
         new DummyStep(() => seen.push('fourth')),
       ]),
       new DummyStep(() => seen.push('fifth')),

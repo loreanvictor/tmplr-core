@@ -8,7 +8,7 @@ import { Flow } from '../flow'
 
 
 export class UpdateExecution extends ChangeExecution {
-  constructor(readonly update: Update, flow: Flow) { super(flow, update.filesystem, update.log) }
+  constructor(readonly update: Update, flow: Flow) { super(flow, update.filesystem, update.options.log) }
 
   async commit() {
     const target = this.filesystem.absolute(await this.delegate(this.update.target.run(this.flow)))
@@ -17,7 +17,7 @@ export class UpdateExecution extends ChangeExecution {
     await Promise.all(
       (await this.update.filesystem.ls(this.update.filesystem.root))
         .map(path => this.update.filesystem.absolute(path))
-        .filter(path => minimatch(path, target, { dot: this.update.hidden }))
+        .filter(path => minimatch(path, target, { dot: this.update.options.hidden }))
         .map(async path => {
           const content = await this.update.filesystem.read(path)
           const updated = await this.update.context.evaluate(content)
@@ -32,13 +32,18 @@ export class UpdateExecution extends ChangeExecution {
 }
 
 
+export interface UpdateExtras {
+  hidden?: boolean
+  log?: ChangeLog
+}
+
+
 export class Update extends Runnable<void> {
   constructor(
     readonly target: Runnable<string>,
-    readonly hidden: boolean,
     readonly filesystem: FileSystem,
     readonly context: EvaluationContext,
-    readonly log: ChangeLog,
+    readonly options: UpdateExtras = {},
   ) { super() }
 
   run(flow: Flow) { return new UpdateExecution(this, flow) }
