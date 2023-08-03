@@ -1,11 +1,13 @@
 import { Execution } from '../execution'
+import { Flow } from '../flow'
 import { Runnable } from '../runnable'
 
 
 export class ValueExecution extends Execution<string> {
   constructor(
-    readonly value: Value
-  ) { super() }
+    readonly value: Value,
+    flow: Flow
+  ) { super(flow) }
 
   async run() {
     return this.value.value
@@ -18,7 +20,7 @@ export class Value extends Runnable<string> {
     readonly value: string
   ) { super() }
 
-  run() {
-    return new ValueExecution(this)
+  run(flow: Flow) {
+    return new ValueExecution(this, flow)
   }
 }

@@ -2,6 +2,7 @@ import { FileSystem } from '../../filesystem'
 import { Value } from '../../expr/value'
 import { Degit } from '../degit'
 import { ChangeLog } from '../change'
+import { Flow } from '../../flow'
 
 
 describe(Degit, () => {
@@ -28,7 +29,7 @@ describe(Degit, () => {
       new Value('some/path'),
       dummyFS,
       log,
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(dummyFS.fetch).toHaveBeenCalledWith('some:repo', 'some/path')
     expect(log.entries()[0]!.details['source']).toBe('some:repo')

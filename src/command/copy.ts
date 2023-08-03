@@ -4,14 +4,15 @@ import { Runnable } from '../runnable'
 import { FileSystem } from '../filesystem'
 import { EvaluationContext } from '../eval'
 import { ChangeExecution, ChangeLog } from './change'
+import { Flow } from '../flow'
 
 
 export class CopyExecution extends ChangeExecution {
-  constructor(readonly copy: Copy) { super(copy.filesystem,copy.log) }
+  constructor(readonly copy: Copy, flow: Flow) { super(flow, copy.filesystem, copy.log) }
 
   async commit() {
-    const source = this.copy.filesystem.absolute(await this.delegate(this.copy.source.run()))
-    const dest = this.copy.filesystem.absolute(await this.delegate(this.copy.dest.run()))
+    const source = this.copy.filesystem.absolute(await this.delegate(this.copy.source.run(this.flow)))
+    const dest = this.copy.filesystem.absolute(await this.delegate(this.copy.dest.run(this.flow)))
 
     const copies: {source: string, dest: string, content: string, updated: string}[] = []
     const matcher = new Minimatch(source, { dot: this.copy.hidden })
@@ -49,5 +50,5 @@ export class Copy extends Runnable<void> {
     readonly log: ChangeLog,
   ) { super() }
 
-  run() { return new CopyExecution(this) }
+  run(flow: Flow) { return new CopyExecution(this, flow) }
 }

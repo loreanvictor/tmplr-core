@@ -4,6 +4,7 @@ import { FileSystem } from '../../filesystem'
 import { Value } from '../../expr/value'
 import { Remove } from '../remove'
 import { ChangeLog } from '../change'
+import { Flow } from '../../flow'
 
 
 describe(Remove, () => {
@@ -30,7 +31,7 @@ describe(Remove, () => {
       false,
       dummyFS,
       log,
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(dummyFS.rm).toHaveBeenCalledWith('some/path')
     expect(dummyFS.rm).not.toHaveBeenCalledWith('some/other/path')
@@ -65,7 +66,7 @@ describe(Remove, () => {
       false,
       dummyFS,
       new ChangeLog(),
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(files).toEqual([
       'some/path.ts',
@@ -101,7 +102,7 @@ describe(Remove, () => {
       false,
       dummyFS,
       new ChangeLog(),
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(files).toEqual([
       '/user/some/path.ts',
@@ -130,7 +131,7 @@ describe(Remove, () => {
       false,
       dummyFS,
       new ChangeLog(),
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(dummyFS.rm).toHaveBeenCalledWith('some/other')
   })
@@ -156,7 +157,7 @@ describe(Remove, () => {
       false,
       dummyFS,
       new ChangeLog(),
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(dummyFS.rm).toHaveBeenCalledWith('some/path')
     expect(dummyFS.rm).not.toHaveBeenCalledWith('some/.other/path')
@@ -184,7 +185,7 @@ describe(Remove, () => {
       true,
       dummyFS,
       new ChangeLog(),
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(dummyFS.rm).toHaveBeenCalledWith('some/path')
     expect(dummyFS.rm).toHaveBeenCalledWith('some/.other/path')

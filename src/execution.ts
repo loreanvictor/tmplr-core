@@ -1,4 +1,5 @@
 import { pipe, Subject, map, tap, observe, finalize, Observation } from 'streamlets'
+import { Flow } from './flow'
 
 
 export class Stack {
@@ -22,6 +23,7 @@ export abstract class Execution<T> {
   readonly tracker = new Subject<Stack>()
 
   constructor(
+    protected flow: Flow
   ) { }
 
   protected abstract run(): Promise<T>

@@ -9,6 +9,7 @@ import { providerFromFunctions, Scope, scopeFromProviders } from '../../scope'
 import { Run } from '../run'
 import { EvaluationContext } from '../../eval/context'
 import { ChangeLog } from '../change'
+import { Flow } from '../../flow'
 
 
 describe(Run, () => {
@@ -67,7 +68,7 @@ describe(Run, () => {
       new ChangeLog(),
     )
 
-    await run.run().execute()
+    await run.run(new Flow()).execute()
 
     expect(dummyFS.cd).toHaveBeenCalledWith('some')
     await expect(scope.has('b')).resolves.toBe(true)

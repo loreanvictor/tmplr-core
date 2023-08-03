@@ -1,17 +1,18 @@
 import { Runnable } from '../runnable'
 import { Execution } from '../execution'
+import { Flow } from '../flow'
 
 
 export class IfExecution extends Execution<void> {
-  constructor(readonly if_: If) { super() }
+  constructor(readonly if_: If, flow: Flow) { super(flow) }
 
   async run() {
-    const condition = await this.delegate(this.if_.condition.run())
+    const condition = await this.delegate(this.if_.condition.run(this.flow))
 
     if (condition && condition.length > 0) {
-      await this.delegate(this.if_.then.run())
+      await this.delegate(this.if_.then.run(this.flow))
     } else if (this.if_._else) {
-      await this.delegate(this.if_._else.run())
+      await this.delegate(this.if_._else.run(this.flow))
     }
   }
 }
@@ -24,5 +25,5 @@ export class If extends Runnable<void> {
     readonly _else?: Runnable<void>,
   ) { super() }
 
-  run() { return new IfExecution(this) }
+  run(flow: Flow) { return new IfExecution(this, flow) }
 }

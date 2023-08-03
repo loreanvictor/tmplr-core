@@ -3,6 +3,7 @@ import { dirname, basename } from 'path'
 import { FileSystem } from '../../filesystem'
 import { Value } from '../value'
 import { Path } from '../path'
+import { Flow } from '../../flow'
 
 
 describe(Path, () => {
@@ -25,7 +26,7 @@ describe(Path, () => {
     await expect(new Path(
       new Value('some/path'),
       dummyFS,
-    ).run().execute()).resolves.toBe('/abs/some/path')
+    ).run(new Flow()).execute()).resolves.toBe('/abs/some/path')
 
     expect(dummyFS.absolute).toHaveBeenCalledWith('some/path')
   })

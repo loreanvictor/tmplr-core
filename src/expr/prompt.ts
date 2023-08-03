@@ -1,3 +1,4 @@
+import { Flow } from '../flow'
 import { IOExecution, Unpluggable } from '../io'
 import { Runnable } from '../runnable'
 
@@ -11,12 +12,13 @@ export interface PromptIO extends Unpluggable {
 
 export class PromptExecution extends IOExecution<string, PromptIO> {
   constructor(
-    readonly prompt: Prompt
-  ) { super() }
+    readonly prompt: Prompt,
+    flow: Flow,
+  ) { super(flow) }
 
   async run() {
-    const msg = await this.delegate(this.prompt.msg.run())
-    const _default = this.prompt._default ? (await this.delegate(this.prompt._default.run())) : undefined
+    const msg = await this.delegate(this.prompt.msg.run(this.flow))
+    const _default = this.prompt._default ? (await this.delegate(this.prompt._default.run(this.flow))) : undefined
     const io = await this.connect()
 
     io.setMessage(msg)
@@ -38,7 +40,7 @@ export class Prompt extends Runnable<string> {
     readonly _default?: Runnable<string>,
   ) { super() }
 
-  run() {
-    return new PromptExecution(this)
+  run(flow: Flow) {
+    return new PromptExecution(this, flow)
   }
 }

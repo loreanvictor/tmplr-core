@@ -1,5 +1,6 @@
 import { Execution } from '../execution'
 import { FileSystem } from '../filesystem'
+import { Flow } from '../flow'
 
 
 export interface ChangeDetails {
@@ -28,9 +29,10 @@ export class ChangeLog {
 
 export abstract class ChangeExecution extends Execution<void> {
   constructor(
+    flow: Flow,
     readonly filesystem: FileSystem,
     readonly log?: ChangeLog,
-  ) { super() }
+  ) { super(flow) }
 
   async run() {
     const details = await this.commit()

@@ -6,6 +6,7 @@ import { scopeFromProviders } from '../../scope'
 import { Copy } from '../copy'
 import { ChangeLog } from '../change'
 import { isAbsolute, join, normalize } from 'path'
+import { Flow } from '../../flow'
 
 
 describe(Copy, () => {
@@ -36,7 +37,7 @@ describe(Copy, () => {
       dummyFS,
       context,
       log,
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/other/path', 'hellow world, how is {{ _.other }}?')
     expect(log.entries()[0]!.details['source']).toBe('some/path')
@@ -77,7 +78,7 @@ describe(Copy, () => {
       dummyFS,
       context,
       log,
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(files['target/path.js']).toBe('aaa')
     expect(files['target/other/path.js']).toBe('bbb world')
@@ -119,7 +120,7 @@ describe(Copy, () => {
       dummyFS,
       context,
       log,
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(files['/user/target/path.js']).toBe('aaa')
     expect(files['/user/target/other/path.js']).toBe('bbb world')
@@ -160,7 +161,7 @@ describe(Copy, () => {
       dummyFS,
       context,
       log,
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(files['/user/target/path.js']).toBe('aaa')
     expect(files['/user/target/.other/path.js']).toBeUndefined()
@@ -200,7 +201,7 @@ describe(Copy, () => {
       dummyFS,
       context,
       log,
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(files['/user/target/path.js']).toBe('aaa')
     expect(files['/user/target/.other/path.js']).toBe('bbb')

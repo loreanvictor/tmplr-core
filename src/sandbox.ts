@@ -3,6 +3,7 @@ import { Subject, combine, pipe, of, prepend, tap, finalize, observe, Source } f
 import { Execution, Stack } from './execution'
 import { Runnable } from './runnable'
 import { cached, CachedFunction, ProviderNamespace, Scope } from './scope'
+import { Flow } from './flow'
 
 
 export class SandBox extends Execution<void> {
@@ -14,13 +15,13 @@ export class SandBox extends Execution<void> {
     readonly outputs: {[name: string]: string},
     readonly scope: Scope,
     readonly additionalProviders: ProviderNamespace = {},
-  ) { super() }
+  ) { super(new Flow()) }
 
   async run() {
     const cache: {[name: string]: CachedFunction<string>} = {}
 
     Object.entries(this.inputs).forEach(([name, input]) => {
-      cache[name] = cached(() => this.fork(input.run()))
+      cache[name] = cached(() => this.fork(input.run(this.flow)))
     })
 
     const scope = this.scope.sub({
@@ -34,7 +35,7 @@ export class SandBox extends Execution<void> {
 
     const runnable = this.factory(scope)
     try {
-      await this.delegate(runnable.run())
+      await this.delegate(runnable.run(this.flow))
     } finally {
       await scope.cleanup()
     }

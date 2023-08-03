@@ -8,6 +8,7 @@ import { providerFromFunctions, Scope, scopeFromProviders } from '../../scope'
 import { Use } from '../use'
 import { EvaluationContext } from '../../eval/context'
 import { ChangeLog } from '../change'
+import { Flow } from '../../flow'
 
 
 describe(Use, () => {
@@ -71,7 +72,7 @@ describe(Use, () => {
       new ChangeLog(),
     )
 
-    await use.run().execute()
+    await use.run(new Flow()).execute()
 
     expect(dummyFS.fetch).toHaveBeenCalled()
     expect(dummyFS.read).toHaveBeenCalled()

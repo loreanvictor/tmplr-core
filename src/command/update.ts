@@ -4,13 +4,14 @@ import { Runnable } from '../runnable'
 import { FileSystem } from '../filesystem'
 import { EvaluationContext } from '../eval'
 import { ChangeExecution, ChangeLog } from './change'
+import { Flow } from '../flow'
 
 
 export class UpdateExecution extends ChangeExecution {
-  constructor(readonly update: Update) { super(update.filesystem, update.log) }
+  constructor(readonly update: Update, flow: Flow) { super(flow, update.filesystem, update.log) }
 
   async commit() {
-    const target = this.filesystem.absolute(await this.delegate(this.update.target.run()))
+    const target = this.filesystem.absolute(await this.delegate(this.update.target.run(this.flow)))
     const updates: {target: string, content: string, updated: string}[] = []
 
     await Promise.all(
@@ -40,5 +41,5 @@ export class Update extends Runnable<void> {
     readonly log: ChangeLog,
   ) { super() }
 
-  run() { return new UpdateExecution(this) }
+  run(flow: Flow) { return new UpdateExecution(this, flow) }
 }

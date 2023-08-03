@@ -1,3 +1,4 @@
+import { Flow } from '../../flow'
 import { Choices } from '../choices'
 import { Value } from '../value'
 
@@ -12,7 +13,7 @@ describe(Choices, () => {
         { label: new Value('hello'), value: new Value('world') },
         { label: new Value('hi'), value: new Value('there') },
       ],
-    ).run()
+    ).run(new Flow())
 
     const setMessage = jest.fn()
     const setChoices = jest.fn()

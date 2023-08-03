@@ -2,16 +2,17 @@ import { Execution } from '../../execution'
 import { Runnable } from '../../runnable'
 import { Value } from '../../expr/value'
 import { If } from '../if'
+import { Flow } from '../../flow'
 
 
 class DummyExec extends Execution<void> {
-  constructor(readonly runnable: DummyRunnable) { super() }
+  constructor(readonly runnable: DummyRunnable, flow: Flow) { super(flow) }
   async run() { this.runnable.fn() }
 }
 
 class DummyRunnable extends Runnable<void> {
   constructor(readonly fn: () => void) { super() }
-  run() { return new DummyExec(this) }
+  run(flow: Flow) { return new DummyExec(this, flow) }
 }
 
 
@@ -20,7 +21,7 @@ describe(If, () => {
     const _then = new DummyRunnable(jest.fn())
     const _if = new If(new Value('whatever'), _then)
 
-    await _if.run().execute()
+    await _if.run(new Flow()).execute()
     expect(_then.fn).toHaveBeenCalled()
   })
 
@@ -28,7 +29,7 @@ describe(If, () => {
     const _then = new DummyRunnable(jest.fn())
     const _if = new If(new Value(''), _then)
 
-    await _if.run().execute()
+    await _if.run(new Flow()).execute()
     expect(_then.fn).not.toHaveBeenCalled()
   })
 
@@ -37,7 +38,7 @@ describe(If, () => {
     const _else = new DummyRunnable(jest.fn())
     const _if = new If(new Value(''), _then, _else)
 
-    await _if.run().execute()
+    await _if.run(new Flow()).execute()
     expect(_then.fn).not.toHaveBeenCalled()
     expect(_else.fn).toHaveBeenCalled()
   })

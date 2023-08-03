@@ -1,3 +1,4 @@
+import { Flow } from '../../flow'
 import { Prompt } from '../prompt'
 import { Value } from '../value'
 
@@ -6,7 +7,7 @@ describe(Prompt, () => {
   test('reads a value from given IO interface.', async () => {
     jest.useFakeTimers()
 
-    const exec = new Prompt(new Value('What is the value?')).run()
+    const exec = new Prompt(new Value('What is the value?')).run(new Flow())
 
     const setMessage = jest.fn()
     const setDefault = jest.fn()
@@ -42,7 +43,7 @@ describe(Prompt, () => {
     const exec = new Prompt(
       new Value('What is the value?'),
       new Value('Some default value'),
-    ).run()
+    ).run(new Flow())
 
     const setDefault = jest.fn()
 

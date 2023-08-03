@@ -1,19 +1,21 @@
 import { Runnable } from '../../runnable'
 import { Execution } from '../../execution'
 import { Steps } from '../steps'
+import { Flow } from '../../flow'
 
 
 class DummyExec extends Execution<void> {
   constructor(
-    readonly runnable: Runnable<void>
-  ) { super() }
+    readonly runnable: Runnable<void>,
+    flow: Flow,
+  ) { super(flow) }
 
   async run() { }
 }
 
 class DummyStep extends Runnable<void> {
-  run() {
-    return new DummyExec(this)
+  run(flow: Flow) {
+    return new DummyExec(this, flow)
   }
 }
 
@@ -21,7 +23,7 @@ class DummyStep extends Runnable<void> {
 describe(Steps, () => {
   it('should run all steps', async () => {
     const steps = [new DummyStep(), new DummyStep(), new DummyStep()]
-    const exec = new Steps(steps).run()
+    const exec = new Steps(steps).run(new Flow())
 
     const trace = exec.trace()
     await trace.result

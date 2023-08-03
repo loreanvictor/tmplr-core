@@ -6,42 +6,43 @@ import { Execution } from '../execution'
 import { SandBox } from '../sandbox'
 import { CleanableProvider, providerFromFunctions, Scope, scopeFromProviders } from '../scope'
 import { EvaluationContext } from '../eval/context'
+import { Flow } from '../flow'
 
 
 class ExA extends Execution<void> {
-  constructor(readonly R: RA) { super() }
+  constructor(readonly R: RA, flow: Flow) { super(flow) }
   async run() { await this.R.scope.get('args.a') }
 }
 
 class RA extends Runnable<void> {
   constructor(readonly scope: Scope) { super() }
-  run() { return new ExA(this) }
+  run(flow: Flow) { return new ExA(this, flow) }
 }
 
 class ExB extends Execution<void> {
-  constructor(readonly R: RB) { super() }
+  constructor(readonly R: RB, flow: Flow) { super(flow) }
   async run() { await this.R.scope.get('args.b') }
 }
 
 class RB extends Runnable<void> {
   constructor(readonly scope: Scope) { super() }
-  run() { return new ExB(this) }
+  run(flow: Flow) { return new ExB(this, flow) }
 }
 
 class ExC extends Execution<void> {
-  constructor(readonly R: RC) { super() }
-  async run() { await this.delegate(this.R.rb.run()) }
+  constructor(readonly R: RC, flow: Flow) { super(flow) }
+  async run() { await this.delegate(this.R.rb.run(this.flow)) }
 }
 
 class RC extends Runnable<void> {
   constructor(readonly rb: RB) { super() }
-  run() { return new ExC(this) }
+  run(flow: Flow) { return new ExC(this, flow) }
 }
 
 class ExArg1 extends Execution<string> { async run() { return 'a' } }
-class RArg1 extends Runnable<string> { run() { return new ExArg1 }}
+class RArg1 extends Runnable<string> { run(flow: Flow) { return new ExArg1(flow) }}
 class ExArg2 extends Execution<string> { async run() { return 'b' } }
-class RArg2 extends Runnable<string> { run() { return new ExArg2 }}
+class RArg2 extends Runnable<string> { run(flow: Flow) { return new ExArg2(flow) }}
 
 
 describe(SandBox, () => {

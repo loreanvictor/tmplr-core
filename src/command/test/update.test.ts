@@ -6,6 +6,7 @@ import { EvaluationContext } from '../../eval'
 import { scopeFromProviders } from '../../scope'
 import { Update } from '../update'
 import { ChangeLog } from '../change'
+import { Flow } from '../../flow'
 
 
 describe(Update, () => {
@@ -35,7 +36,7 @@ describe(Update, () => {
       dummyFS,
       context,
       log,
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/path', 'hellow world, how is {{ _.other }}?')
     expect(log.entries()[0]!.details['target']).toBe('some/path')
@@ -68,7 +69,7 @@ describe(Update, () => {
       dummyFS,
       context,
       log,
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/path', 'hellow world, how is {{ _.other }}?')
     expect(dummyFS.write).toHaveBeenCalledWith('some/third-file', 'hellow world, how is {{ _.other }}?')
@@ -107,7 +108,7 @@ describe(Update, () => {
       dummyFS,
       context,
       log,
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(files['/user/some/path']).toBe('hellow world!')
   })
@@ -138,7 +139,7 @@ describe(Update, () => {
       dummyFS,
       context,
       log,
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/path', 'hellow world, how is {{ _.other }}?')
     expect(dummyFS.write).not.toHaveBeenCalledWith('some/.other/path', 'hellow world, how is {{ _.other }}?')
@@ -171,7 +172,7 @@ describe(Update, () => {
       dummyFS,
       context,
       log,
-    ).run().execute()
+    ).run(new Flow()).execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/path', 'hellow world, how is {{ _.other }}?')
     expect(dummyFS.write).toHaveBeenCalledWith('some/.other/path', 'hellow world, how is {{ _.other }}?')

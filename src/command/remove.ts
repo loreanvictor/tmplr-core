@@ -3,13 +3,14 @@ import { Minimatch } from 'minimatch'
 import { Runnable } from '../runnable'
 import { FileSystem } from '../filesystem'
 import { ChangeExecution, ChangeLog } from './change'
+import { Flow } from '../flow'
 
 
 export class RemoveExecution extends ChangeExecution {
-  constructor(readonly remove: Remove) { super(remove.filesystem, remove.log) }
+  constructor(readonly remove: Remove, flow: Flow) { super(flow, remove.filesystem, remove.log) }
 
   async commit() {
-    const target = this.remove.filesystem.absolute(await this.delegate(this.remove.target.run()))
+    const target = this.remove.filesystem.absolute(await this.delegate(this.remove.target.run(this.flow)))
     const removals: { target: string }[] = []
 
     const matcher = new Minimatch(target, { dot: this.remove.hidden })
@@ -42,5 +43,5 @@ export class Remove extends Runnable<void> {
     readonly log: ChangeLog,
   ) { super() }
 
-  run() { return new RemoveExecution(this) }
+  run(flow: Flow) { return new RemoveExecution(this, flow) }
 }

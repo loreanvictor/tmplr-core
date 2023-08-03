@@ -7,17 +7,18 @@ import { SandBox } from '../sandbox'
 import { ChangeLog } from './change'
 import { ParseFn } from './run'
 import { filesystemProvider } from '../filesystem/provider'
+import { Flow } from '../flow'
 
 
 export class UseExecution extends Execution<void> {
-  constructor(readonly use: Use) { super() }
+  constructor(readonly use: Use, flow: Flow) { super(flow) }
   async run() {
-    const target = await this.delegate(this.use.target.run())
+    const target = await this.delegate(this.use.target.run(this.flow))
     const dest = '.use-' + Math.random().toString(36).substr(2)
 
     try {
       await this.use.filesystem.fetch(target, dest)
-      const recipe = await this.delegate(this.use.recipe.run())
+      const recipe = await this.delegate(this.use.recipe.run(this.flow))
       const filesystem = this.use.filesystem.cd(dest)
       const content = await filesystem.read(recipe)
 
@@ -59,5 +60,5 @@ export class Use extends Runnable<void> {
     readonly changelog: ChangeLog,
   ) { super()}
 
-  run() { return new UseExecution(this) }
+  run(flow: Flow) { return new UseExecution(this, flow) }
 }

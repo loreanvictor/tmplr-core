@@ -1,4 +1,5 @@
 import { Execution } from '../execution'
+import { Flow } from '../flow'
 
 
 class ExA extends Execution<number> {
@@ -11,8 +12,8 @@ class ExB extends Execution<void> {
 
 class ExC extends Execution<number> {
   async run() {
-    const res = await this.delegate(new ExA())
-    await this.delegate(new ExB())
+    const res = await this.delegate(new ExA(this.flow))
+    await this.delegate(new ExB(this.flow))
 
     return res * 3
   }
@@ -20,8 +21,8 @@ class ExC extends Execution<number> {
 
 class ExD extends Execution<boolean> {
   async run() {
-    const a = await this.delegate(new ExC())
-    const b = await this.delegate(new ExA())
+    const a = await this.delegate(new ExC(this.flow))
+    const b = await this.delegate(new ExA(this.flow))
 
     return a - b === 42
   }
@@ -30,7 +31,7 @@ class ExD extends Execution<boolean> {
 
 describe(Execution, () => {
   test('executes properly.', async () => {
-    const exec = new ExD()
+    const exec = new ExD(new Flow())
     const result = await exec.execute()
 
     expect(result).toBe(true)
@@ -38,7 +39,7 @@ describe(Execution, () => {
 
 
   test('emits proper execution stack.', async () => {
-    const exec = new ExD()
+    const exec = new ExD(new Flow())
     const trace = exec.trace()
 
     await trace.result

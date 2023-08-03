@@ -2,6 +2,7 @@ import { basename, dirname } from 'path'
 
 import { ChangeLog, ChangeExecution } from '../change'
 import { FileSystem } from '../../filesystem'
+import { Flow } from '../../flow'
 
 
 describe(ChangeExecution, () => {
@@ -23,8 +24,8 @@ describe(ChangeExecution, () => {
     }
 
     class DummyChangeExec extends ChangeExecution {
-      constructor() {
-        super(dummyFS, log)
+      constructor(flow: Flow) {
+        super(flow, dummyFS, log)
       }
 
       async commit() {
@@ -34,7 +35,7 @@ describe(ChangeExecution, () => {
       }
     }
 
-    const exec = new DummyChangeExec()
+    const exec = new DummyChangeExec(new Flow())
     await exec.execute()
 
     expect(log.entries()).toHaveLength(1)

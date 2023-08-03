@@ -6,6 +6,7 @@ import { SandBox } from '../sandbox'
 import { ChangeLog } from './change'
 import { EvaluationContext } from '../eval'
 import { filesystemProvider } from '../filesystem/provider'
+import { Flow } from '../flow'
 
 
 export type ParseFn = (
@@ -19,10 +20,10 @@ export type ParseFn = (
 
 
 export class RunExecution extends Execution<void> {
-  constructor(readonly _run: Run) { super() }
+  constructor(readonly _run: Run, flow: Flow) { super(flow) }
 
   async run() {
-    const target = await this.delegate(this._run.target.run())
+    const target = await this.delegate(this._run.target.run(this.flow))
     const content = await this._run.filesystem.read(target)
     const filesystem = this._run.filesystem.cd(this._run.filesystem.dirname(target))
 
@@ -60,7 +61,7 @@ export class Run extends Runnable<void> {
     readonly changelog: ChangeLog,
   ) { super() }
 
-  run() {
-    return new RunExecution(this)
+  run(flow: Flow) {
+    return new RunExecution(this, flow)
   }
 }
