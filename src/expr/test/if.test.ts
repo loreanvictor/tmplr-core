@@ -1,6 +1,6 @@
 import { Execution } from '../../execution'
 import { Runnable } from '../../runnable'
-import { Value } from '../../expr/value'
+import { Value } from '../value'
 import { If } from '../if'
 import { Flow } from '../../flow'
 
@@ -41,5 +41,33 @@ describe(If, () => {
     await _if.run(new Flow()).execute()
     expect(_then.fn).not.toHaveBeenCalled()
     expect(_else.fn).toHaveBeenCalled()
+  })
+
+  test('is like a ternary operator.', async () => {
+    const val1 = await new If(
+      new Value('not_empty'),
+      new Value('then')
+    ).run(new Flow()).execute()
+    expect(val1).toBe('then')
+
+    const val2 = await new If(
+      new Value(''),
+      new Value('then'),
+      new Value('else')
+    ).run(new Flow()).execute()
+    expect(val2).toBe('else')
+
+    const val3 = await new If(
+      new Value(''),
+      new Value('then')
+    ).run(new Flow()).execute()
+    expect(val3).toBe('')
+
+    const val4 = await new If(
+      new Value('not_empty'),
+      new DummyRunnable(() => {}),
+      new Value('else')
+    ).run(new Flow()).execute()
+    expect(val4).toBe('')
   })
 })
