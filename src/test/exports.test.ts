@@ -8,7 +8,7 @@ import {
   providerFromFunctions,
   FileSystem, AccessError,
   Eval, EvalExecution, Prompt, PromptExecution, Value, ValueExecution, Choices, ChoicesExecution, Choice,
-  Path, PathExecution, From, FromExecution,
+  Path, PathExecution, From, FromExecution, Exists, ExistsExecution,
   ChangeDetails, ChangeLogEntry, ChangeLog, ChangeExecution, Read, ReadExecution, Run, RunExecution, ParseFn,
   Steps, StepsExecution, If, IfExecution, Copy, CopyExecution, Update, UpdateExecution, Degit, DegitExecution,
   Remove, RemoveExecution, Use, UseExecution, Skip, SkipExecution, Noop, NoopExecution,
@@ -58,6 +58,8 @@ test('all necessary stuff are exported.', () => {
   expect(FromExecution).not.toBe(undefined)
   expect(Path).not.toBe(undefined)
   expect(PathExecution).not.toBe(undefined)
+  expect(Exists).not.toBe(undefined)
+  expect(ExistsExecution).not.toBe(undefined)
   expect(<ChangeDetails>{}).not.toBe(undefined)
   expect(<ChangeLogEntry>{}).not.toBe(undefined)
   expect(ChangeLog).not.toBe(undefined)
