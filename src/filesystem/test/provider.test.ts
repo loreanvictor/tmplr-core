@@ -1,11 +1,11 @@
 import { basename, dirname } from 'path'
 
 import { FileSystem } from '../types'
-import { filesystemProvider } from '../provider'
+import { createFSProvider } from '../provider'
 import { sourceFromProviders } from '../../scope'
 
 
-describe(filesystemProvider, () => {
+describe(createFSProvider, () => {
   test('provides root and scope information of given filesystem.', async () => {
     const dummyFS: FileSystem = {
       root: '/home/stuff',
@@ -22,7 +22,7 @@ describe(filesystemProvider, () => {
       fetch: jest.fn(() => Promise.resolve()),
     }
 
-    const source = sourceFromProviders({ filesystem: filesystemProvider(dummyFS) })
+    const source = sourceFromProviders({ filesystem: createFSProvider(dummyFS) })
 
     await expect(source.has('filesystem.root')).resolves.toBe(true)
     await expect(source.has('filesystem.scope')).resolves.toBe(true)

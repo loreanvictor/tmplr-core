@@ -5,7 +5,7 @@ import { Scope } from '../scope'
 import { SandBox } from '../sandbox'
 import { ChangeLog } from './change'
 import { EvaluationContext } from '../eval'
-import { filesystemProvider } from '../filesystem/provider'
+import { createFSProvider } from '../filesystem/provider'
 import { Flow } from '../flow'
 
 
@@ -41,7 +41,7 @@ export class RunExecution extends Execution<void> {
         this._run.options.outputs || {},
         this._run.scope,
         {
-          filesystem: filesystemProvider(filesystem),
+          filesystem: createFSProvider(filesystem),
         }
       )
     )

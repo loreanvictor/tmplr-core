@@ -13,6 +13,7 @@ import {
   Steps, StepsExecution, If, IfExecution, Copy, CopyExecution, Update, UpdateExecution, Degit, DegitExecution,
   Remove, RemoveExecution, Use, UseExecution, Skip, SkipExecution, Noop, NoopExecution,
   EvaluationContext, STANDARD_PIPES, Pipe, PipeMap, PipeRegistry, FromFile, FromFileExecution, WriteExecution, Write,
+  createFSProvider
 } from '../index'
 
 
@@ -96,4 +97,5 @@ test('all necessary stuff are exported.', () => {
   expect(PipeRegistry).not.toBe(undefined)
   expect(Write).not.toBe(undefined)
   expect(WriteExecution).not.toBe(undefined)
+  expect(createFSProvider).not.toBe(undefined)
 })

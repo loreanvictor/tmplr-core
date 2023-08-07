@@ -6,7 +6,7 @@ import { FileSystem } from '../filesystem'
 import { SandBox } from '../sandbox'
 import { ChangeLog } from './change'
 import { ParseFn } from './run'
-import { filesystemProvider } from '../filesystem/provider'
+import { createFSProvider } from '../filesystem/provider'
 import { Flow } from '../flow'
 
 
@@ -38,7 +38,7 @@ export class UseExecution extends Execution<void> {
           this.use.options.outputs || {},
           this.use.scope,
           {
-            filesystem: filesystemProvider(filesystem),
+            filesystem: createFSProvider(filesystem),
           }
         )
       )
