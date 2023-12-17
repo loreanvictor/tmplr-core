@@ -1,4 +1,4 @@
-import { normalize } from 'path'
+import { normalize } from 'path/posix'
 
 import { FileSystem } from '../../filesystem'
 import { Value } from '../../expr/value'

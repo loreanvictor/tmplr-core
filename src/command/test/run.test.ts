@@ -1,4 +1,4 @@
-import { basename, dirname } from 'path'
+import { basename, dirname } from 'path/posix'
 
 import { Read } from '../read'
 import { Steps } from '../steps'

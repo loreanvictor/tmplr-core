@@ -1,3 +1,5 @@
+import sleep from 'sleep-promise'
+
 import { Flow } from '../../flow'
 import { Choices } from '../choices'
 import { Value } from '../value'
@@ -5,8 +7,6 @@ import { Value } from '../value'
 
 describe(Choices, () => {
   test('selects a value from given IO interface.', async () => {
-    jest.useFakeTimers()
-
     const exec = new Choices(
       new Value('whats up?'),
       [
@@ -28,19 +28,18 @@ describe(Choices, () => {
             setChoices,
             unplug,
             pick: () => new Promise(resolve => {
-              setTimeout(() => resolve(1), 100)
-              jest.advanceTimersByTime(100)
+              setTimeout(() => resolve(1), 5)
             })
           }))
         }
       )()
     ])
 
+    await sleep(10)
+
     expect(res[0]).toBe('there')
     expect(unplug).toHaveBeenCalled()
     expect(setMessage).toHaveBeenCalledWith('whats up?')
     expect(setChoices).toHaveBeenCalledWith(['hello', 'hi'])
-
-    jest.useRealTimers()
   })
 })

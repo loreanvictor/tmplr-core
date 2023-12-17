@@ -1,3 +1,5 @@
+import sleep from 'sleep-promise'
+
 import { Flow } from '../../flow'
 import { Prompt } from '../prompt'
 import { Value } from '../value'
@@ -5,8 +7,6 @@ import { Value } from '../value'
 
 describe(Prompt, () => {
   test('reads a value from given IO interface.', async () => {
-    jest.useFakeTimers()
-
     const exec = new Prompt(new Value('What is the value?')).run(new Flow())
 
     const setMessage = jest.fn()
@@ -21,8 +21,7 @@ describe(Prompt, () => {
             setMessage,
             setDefault,
             value: () => new Promise<string>(resolve => {
-              setTimeout(() => resolve('Some value'), 100)
-              jest.advanceTimersByTime(100)
+              setTimeout(() => resolve('Some value'), 5)
             }),
             unplug,
           }))
@@ -30,12 +29,12 @@ describe(Prompt, () => {
       )()
     ])
 
+    await sleep(10)
+
     expect(setMessage).toHaveBeenCalledWith('What is the value?')
     expect(setDefault).not.toHaveBeenCalled()
     expect(res).toEqual(['Some value', undefined])
     expect(unplug).toHaveBeenCalled()
-
-    jest.useRealTimers()
   })
 
 

@@ -1,11 +1,11 @@
-// import { normalize } from 'path'
+import { isAbsolute, join, normalize } from 'path/posix'
+
 import { FileSystem } from '../../filesystem'
 import { Value } from '../../expr/value'
 import { EvaluationContext } from '../../eval'
 import { scopeFromProviders } from '../../scope'
 import { Copy } from '../copy'
 import { ChangeLog } from '../change'
-import { isAbsolute, join, normalize } from 'path'
 import { Flow } from '../../flow'
 
 

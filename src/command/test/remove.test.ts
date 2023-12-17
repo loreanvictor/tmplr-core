@@ -1,4 +1,4 @@
-import { isAbsolute, join, normalize } from 'path'
+import { isAbsolute, join, normalize } from 'path/posix'
 
 import { FileSystem } from '../../filesystem'
 import { Value } from '../../expr/value'

@@ -1,4 +1,4 @@
-import { basename, dirname } from 'path'
+import { basename, dirname } from 'path/posix'
 
 import { ChangeLog, ChangeExecution } from '../change'
 import { FileSystem } from '../../filesystem'
