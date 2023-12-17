@@ -4,7 +4,14 @@ on:
     branches:
       - main
 jobs:
-  run:
+  test:
+    uses: ./.github/workflows/test.yml
+  coverage:
+    uses: ./.github/workflows/coverage.yml
+  publish:
+    needs:
+      - test
+      - coverage
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
