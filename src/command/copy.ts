@@ -1,4 +1,4 @@
-import { Minimatch, sep } from 'minimatch'
+import { Minimatch } from 'minimatch'
 
 import { Runnable } from '../runnable'
 import { FileSystem } from '../filesystem'
@@ -16,9 +16,9 @@ export class CopyExecution extends ChangeExecution {
 
     const copies: {source: string, dest: string, content: string, updated: string}[] = []
     const matcher = new Minimatch(source, { dot: this.copy.options.hidden })
-    const split = source.split(sep)
+    const split = source.split('/')
     const index = split.findIndex(part => new Minimatch(part).hasMagic())
-    const prefix = split.slice(0, index > 0 ? index : split.length).join(sep)
+    const prefix = split.slice(0, index > 0 ? index : split.length).join('/')
 
     await Promise.all(
       (await this.copy.filesystem.ls(this.copy.filesystem.root))
