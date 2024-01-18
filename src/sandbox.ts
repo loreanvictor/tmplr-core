@@ -14,8 +14,9 @@ export class SandBox extends Execution<void> {
     readonly inputs: {[name: string]: Runnable<string>},
     readonly outputs: {[name: string]: string},
     readonly scope: Scope,
+    flow: Flow,
     readonly additionalProviders: ProviderNamespace = {},
-  ) { super(new Flow()) }
+  ) { super(flow) }
 
   async run() {
     const cache: {[name: string]: CachedFunction<string>} = {}

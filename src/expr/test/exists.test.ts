@@ -21,7 +21,7 @@ describe(Exists, () => {
     }
 
     const exists = new Exists(new Value('package.json'), dummyFS)
-    const result = await exists.run(new Flow()).execute()
+    const result = await exists.run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(result).toBe('/package.json')
   })
@@ -42,7 +42,7 @@ describe(Exists, () => {
     }
 
     const exists = new Exists(new Value('**/*.ts'), dummyFS)
-    const result = await exists.run(new Flow()).execute()
+    const result = await exists.run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(result).toBe('')
   })
@@ -63,7 +63,7 @@ describe(Exists, () => {
     }
 
     const exists = new Exists(new Value('**/*.ts'), dummyFS, { hidden: true })
-    const result = await exists.run(new Flow()).execute()
+    const result = await exists.run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(result).toBe('/src/.expr/index.ts')
   })

@@ -19,7 +19,7 @@ class DummyIOExecution extends IOExecution<void, DummyIO> {
 
 describe(IOExecution, () => {
   test('provides an IO interface for the child execution.', async () => {
-    const exec = new DummyIOExecution(new Flow())
+    const exec = new DummyIOExecution(new Flow({ onKill: jest.fn() }))
     const io: DummyIO = {
       unplug: jest.fn(),
       hellow: jest.fn(),
@@ -35,7 +35,7 @@ describe(IOExecution, () => {
   })
 
   test('can be unplugged and replugged to a connector.', async () => {
-    const exec = new DummyIOExecution(new Flow())
+    const exec = new DummyIOExecution(new Flow({ onKill: jest.fn() }))
     const io1: DummyIO = { unplug: jest.fn(), hellow: jest.fn() }
     const io2: DummyIO = { unplug: jest.fn(), hellow: jest.fn() }
 

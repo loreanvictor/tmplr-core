@@ -16,6 +16,10 @@ export class UseExecution extends Execution<void> {
     const target = await this.delegate(this.use.target.run(this.flow))
     const dest = '.use-' + Math.random().toString(36).substr(2)
 
+    const cleanup = () => this.use.filesystem.rm(dest)
+
+    this.flow.onKill(cleanup)
+
     try {
       await this.use.filesystem.fetch(target, dest)
       const recipe = this.use.options.recipe ?
@@ -37,13 +41,14 @@ export class UseExecution extends Execution<void> {
           this.use.options.inputs || {},
           this.use.options.outputs || {},
           this.use.scope,
+          new Flow(this.flow.env),
           {
             filesystem: createFSProvider(filesystem),
-          }
+          },
         )
       )
     } finally {
-      await this.use.filesystem.rm(dest)
+      await cleanup()
     }
   }
 }

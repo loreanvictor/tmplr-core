@@ -21,7 +21,7 @@ describe(If, () => {
     const _then = new DummyRunnable(jest.fn())
     const _if = new If(new Value('whatever'), _then)
 
-    await _if.run(new Flow()).execute()
+    await _if.run(new Flow({ onKill: jest.fn() })).execute()
     expect(_then.fn).toHaveBeenCalled()
   })
 
@@ -29,7 +29,7 @@ describe(If, () => {
     const _then = new DummyRunnable(jest.fn())
     const _if = new If(new Value(''), _then)
 
-    await _if.run(new Flow()).execute()
+    await _if.run(new Flow({ onKill: jest.fn() })).execute()
     expect(_then.fn).not.toHaveBeenCalled()
   })
 
@@ -38,7 +38,7 @@ describe(If, () => {
     const _else = new DummyRunnable(jest.fn())
     const _if = new If(new Value(''), _then, { else: _else })
 
-    await _if.run(new Flow()).execute()
+    await _if.run(new Flow({ onKill: jest.fn() })).execute()
     expect(_then.fn).not.toHaveBeenCalled()
     expect(_else.fn).toHaveBeenCalled()
   })
@@ -47,27 +47,27 @@ describe(If, () => {
     const val1 = await new If(
       new Value('not_empty'),
       new Value('then')
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
     expect(val1).toBe('then')
 
     const val2 = await new If(
       new Value(''),
       new Value('then'),
       { else: new Value('else') }
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
     expect(val2).toBe('else')
 
     const val3 = await new If(
       new Value(''),
       new Value('then')
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
     expect(val3).toBe('')
 
     const val4 = await new If(
       new Value('not_empty'),
       new DummyRunnable(() => {}),
       { else: new Value('else') }
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
     expect(val4).toBe('')
   })
 })

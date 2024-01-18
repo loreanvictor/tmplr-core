@@ -31,7 +31,7 @@ class ExD extends Execution<boolean> {
 
 describe(Execution, () => {
   test('executes properly.', async () => {
-    const exec = new ExD(new Flow())
+    const exec = new ExD(new Flow({ onKill: jest.fn() }))
     const result = await exec.execute()
 
     expect(result).toBe(true)
@@ -39,7 +39,7 @@ describe(Execution, () => {
 
 
   test('emits proper execution stack.', async () => {
-    const exec = new ExD(new Flow())
+    const exec = new ExD(new Flow({ onKill: jest.fn() }))
     const trace = exec.trace()
 
     await trace.result

@@ -13,7 +13,7 @@ describe(Choices, () => {
         { label: new Value('hello'), value: new Value('world') },
         { label: new Value('hi'), value: new Value('there') },
       ],
-    ).run(new Flow())
+    ).run(new Flow({ onKill: jest.fn() }))
 
     const setMessage = jest.fn()
     const setChoices = jest.fn()

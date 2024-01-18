@@ -40,9 +40,10 @@ export class RunExecution extends Execution<void> {
         this._run.options.inputs || {},
         this._run.options.outputs || {},
         this._run.scope,
+        new Flow(this.flow.env),
         {
           filesystem: createFSProvider(filesystem),
-        }
+        },
       )
     )
   }

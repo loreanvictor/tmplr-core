@@ -34,7 +34,7 @@ describe(Skip, () => {
       new DummyStep(() => seen.push('second')),
       new Skip(),
       new DummyStep(() => seen.push('third')),
-    ]).run(new Flow()).execute()
+    ]).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(seen).toEqual(['first', 'second' ])
   })
@@ -51,7 +51,7 @@ describe(Skip, () => {
         new DummyStep(() => seen.push('fourth')),
       ]),
       new DummyStep(() => seen.push('fifth')),
-    ]).run(new Flow()).execute()
+    ]).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(seen).toEqual(['first', 'second', 'third', 'fifth'])
   })
@@ -68,7 +68,7 @@ describe(Skip, () => {
         new DummyStep(() => seen.push('fourth')),
       ]),
       new DummyStep(() => seen.push('fifth')),
-    ]).run(new Flow()).execute()
+    ]).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(seen).toEqual(['first', 'second', 'third'])
   })

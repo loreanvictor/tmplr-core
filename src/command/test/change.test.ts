@@ -35,7 +35,7 @@ describe(ChangeExecution, () => {
       }
     }
 
-    const exec = new DummyChangeExec(new Flow())
+    const exec = new DummyChangeExec(new Flow({ onKill: jest.fn() }))
     await exec.execute()
 
     expect(log.entries()).toHaveLength(1)

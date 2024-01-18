@@ -35,7 +35,7 @@ describe(Update, () => {
       dummyFS,
       context,
       { log }
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/path', 'hellow world, how is {{ _.other }}?')
     expect(log.entries()[0]!.details['target']).toBe('some/path')
@@ -67,7 +67,7 @@ describe(Update, () => {
       dummyFS,
       context,
       { log }
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/path', 'hellow world, how is {{ _.other }}?')
     expect(dummyFS.write).toHaveBeenCalledWith('some/third-file', 'hellow world, how is {{ _.other }}?')
@@ -103,7 +103,7 @@ describe(Update, () => {
       new Value('./some/*'),
       dummyFS,
       context,
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(files['/user/some/path']).toBe('hellow world!')
   })
@@ -133,7 +133,7 @@ describe(Update, () => {
       dummyFS,
       context,
       { log }
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/path', 'hellow world, how is {{ _.other }}?')
     expect(dummyFS.write).not.toHaveBeenCalledWith('some/.other/path', 'hellow world, how is {{ _.other }}?')
@@ -165,7 +165,7 @@ describe(Update, () => {
       dummyFS,
       context,
       { log, hidden: true }
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/path', 'hellow world, how is {{ _.other }}?')
     expect(dummyFS.write).toHaveBeenCalledWith('some/.other/path', 'hellow world, how is {{ _.other }}?')

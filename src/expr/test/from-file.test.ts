@@ -23,7 +23,7 @@ describe(FromFile, () => {
     }
 
     const exists = new FromFile(new Value('package.json'), dummyFS)
-    const result = await exists.run(new Flow()).execute()
+    const result = await exists.run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(result).toBe(JSON.stringify({ name: 'test' }))
   })
@@ -46,7 +46,7 @@ describe(FromFile, () => {
     }
 
     const exists = new FromFile(new Value('README.md'), dummyFS)
-    const result = await exists.run(new Flow()).execute()
+    const result = await exists.run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(result).toBe('')
   })

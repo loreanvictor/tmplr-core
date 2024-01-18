@@ -1,7 +1,9 @@
 import { basename, dirname } from 'path/posix'
+import sleep from 'sleep-promise'
 
 import { Read } from '../read'
 import { Value } from '../../expr/value'
+import { Prompt } from '../../expr/prompt'
 import { Eval } from '../../expr/eval'
 import { FileSystem } from '../../filesystem'
 import { providerFromFunctions, Scope, scopeFromProviders } from '../../scope'
@@ -73,7 +75,7 @@ describe(Use, () => {
       }
     )
 
-    await use.run(new Flow()).execute()
+    await use.run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(dummyFS.fetch).toHaveBeenCalled()
     expect(dummyFS.read).toHaveBeenCalled()
@@ -107,7 +109,7 @@ describe(Use, () => {
       dummyFS,
       scope,
       new EvaluationContext(scope),
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(parse).toHaveBeenCalledWith(
       undefined,
@@ -117,5 +119,40 @@ describe(Use, () => {
       expect.anything(),
       undefined
     )
+  })
+
+  test('will cleanup on kill.', async () => {
+    const dummyFS: FileSystem = {
+      root: '', scope: '',
+      dirname: jest.fn(), basename: jest.fn(), absolute: jest.fn(),
+      ls: jest.fn(), read: jest.fn(), write: jest.fn(), access: jest.fn(), rm: jest.fn(),
+      fetch: jest.fn(),
+
+      cd: () => dummyFS
+    }
+
+    const scope = scopeFromProviders({}, '_', { foo: 'bar' })
+    const parse = () => new Prompt(new Value('foo')) as any
+
+    let kill: () => Promise<void>
+    const flow = new Flow({ onKill: (cb) => (kill = cb, () => {}) })
+
+    await Promise.race([
+      new Use(
+        new Value('some:repo'),
+        parse,
+        dummyFS,
+        scope,
+        new EvaluationContext(scope),
+      ).run(flow).execute(),
+      (async () => {
+        await sleep(1)
+        expect(kill!).toBeDefined()
+        await kill!()
+
+        expect(dummyFS.rm).toHaveBeenCalled()
+        expect((dummyFS.rm as jest.Mock).mock.calls[0][0]).toMatch('.use-')
+      })()
+    ])
   })
 })

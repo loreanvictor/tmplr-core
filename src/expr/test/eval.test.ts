@@ -19,7 +19,7 @@ describe(Eval, () => {
     const context = createStandardContext(source)
     const exec =
       new Eval('Hellow {{ names.jack | lowercase }}, how is {{ names.jill | trim: 1 | Capital Case }} doing?', context)
-        .run(new Flow())
+        .run(new Flow({ onKill: jest.fn() }))
 
     const res = await exec.execute()
     expect(res).toBe('Hellow jack!, how is Jill doing?')
@@ -34,7 +34,7 @@ describe(Eval, () => {
     ])
 
     const exec = new Eval('{{ var1 | lowercase }} vs {{ var2 | trim: ll | UPPERCASE }}', context, { steps })
-      .run(new Flow())
+      .run(new Flow({ onKill: jest.fn() }))
     const res = await exec.execute()
 
     expect(res).toBe('jack vs JI')

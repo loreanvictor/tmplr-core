@@ -82,7 +82,7 @@ describe(Run, () => {
       }
     )
 
-    await run.run(new Flow()).execute()
+    await run.run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(dummyFS.cd).toHaveBeenCalledWith('some')
     await expect(scope.has('b')).resolves.toBe(true)
@@ -128,7 +128,7 @@ describe(Run, () => {
       dummyFS,
       scope,
       new EvaluationContext(scope),
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(target).toHaveBeenCalledTimes(2)
   })

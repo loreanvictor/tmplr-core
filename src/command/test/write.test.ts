@@ -34,7 +34,7 @@ describe(Write, () => {
       new Value('some/path'),
       dummyFS,
       context
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/path', 'hellow world, how is {{ _.other }}?')
     // expect(log.entries()[0]!.details['target']).toBe('some/path')
@@ -67,7 +67,7 @@ describe(Write, () => {
       dummyFS,
       context,
       { log }
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(log.entries()[0]!.details['target']).toBe('some/path')
     expect(log.entries()[0]!.details['content']).toBe('hellow world, how is {{ _.other }}?')

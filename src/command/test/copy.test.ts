@@ -36,7 +36,7 @@ describe(Copy, () => {
       dummyFS,
       context,
       { log }
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(dummyFS.write).toHaveBeenCalledWith('some/other/path', 'hellow world, how is {{ _.other }}?')
     expect(log.entries()[0]!.details['source']).toBe('some/path')
@@ -74,7 +74,7 @@ describe(Copy, () => {
       new Value('target'),
       dummyFS,
       context
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(files['target/path.js']).toBe('aaa')
     expect(files['target/other/path.js']).toBe('bbb world')
@@ -113,7 +113,7 @@ describe(Copy, () => {
       new Value('./target'),
       dummyFS,
       context
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(files['/user/target/path.js']).toBe('aaa')
     expect(files['/user/target/other/path.js']).toBe('bbb world')
@@ -151,7 +151,7 @@ describe(Copy, () => {
       new Value('./target'),
       dummyFS,
       context
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(files['/user/target/path.js']).toBe('aaa')
     expect(files['/user/target/.other/path.js']).toBeUndefined()
@@ -189,7 +189,7 @@ describe(Copy, () => {
       dummyFS,
       context,
       { hidden: true }
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(files['/user/target/path.js']).toBe('aaa')
     expect(files['/user/target/.other/path.js']).toBe('bbb')

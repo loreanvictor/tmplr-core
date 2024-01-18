@@ -26,7 +26,7 @@ describe(Path, () => {
     await expect(new Path(
       new Value('some/path'),
       dummyFS,
-    ).run(new Flow()).execute()).resolves.toBe('/abs/some/path')
+    ).run(new Flow({ onKill: jest.fn() })).execute()).resolves.toBe('/abs/some/path')
 
     expect(dummyFS.absolute).toHaveBeenCalledWith('some/path')
   })

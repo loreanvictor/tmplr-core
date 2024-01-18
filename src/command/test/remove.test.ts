@@ -30,7 +30,7 @@ describe(Remove, () => {
       new Value('some/path'),
       dummyFS,
       { log }
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(dummyFS.rm).toHaveBeenCalledWith('some/path')
     expect(dummyFS.rm).not.toHaveBeenCalledWith('some/other/path')
@@ -63,7 +63,7 @@ describe(Remove, () => {
     await new Remove(
       new Value('some/**/*.js'),
       dummyFS,
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(files).toEqual([
       'some/path.ts',
@@ -97,7 +97,7 @@ describe(Remove, () => {
     await new Remove(
       new Value('./some/**/*.js'),
       dummyFS,
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(files).toEqual([
       '/user/some/path.ts',
@@ -124,7 +124,7 @@ describe(Remove, () => {
     await new Remove(
       new Value('some/other'),
       dummyFS,
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(dummyFS.rm).toHaveBeenCalledWith('some/other')
   })
@@ -148,7 +148,7 @@ describe(Remove, () => {
     await new Remove(
       new Value('some/**/*'),
       dummyFS,
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(dummyFS.rm).toHaveBeenCalledWith('some/path')
     expect(dummyFS.rm).not.toHaveBeenCalledWith('some/.other/path')
@@ -175,7 +175,7 @@ describe(Remove, () => {
       new Value('some/**/*'),
       dummyFS,
       { hidden: true },
-    ).run(new Flow()).execute()
+    ).run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(dummyFS.rm).toHaveBeenCalledWith('some/path')
     expect(dummyFS.rm).toHaveBeenCalledWith('some/.other/path')

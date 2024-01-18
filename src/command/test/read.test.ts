@@ -7,7 +7,7 @@ import { Flow } from '../../flow'
 describe(Read, () => {
   test('reads a value into a variable.', async () => {
     const store = storeFromProviders({})
-    const exec = new Read('foo', new Value('bar'), store).run(new Flow())
+    const exec = new Read('foo', new Value('bar'), store).run(new Flow({ onKill: jest.fn() }))
     await exec.execute()
 
     await expect(store.get('foo')).resolves.toBe('bar')

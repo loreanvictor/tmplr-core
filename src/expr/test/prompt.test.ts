@@ -7,7 +7,7 @@ import { Value } from '../value'
 
 describe(Prompt, () => {
   test('reads a value from given IO interface.', async () => {
-    const exec = new Prompt(new Value('What is the value?')).run(new Flow())
+    const exec = new Prompt(new Value('What is the value?')).run(new Flow({ onKill: jest.fn() }))
 
     const setMessage = jest.fn()
     const setDefault = jest.fn()
@@ -42,7 +42,7 @@ describe(Prompt, () => {
     const exec = new Prompt(
       new Value('What is the value?'),
       { default: new Value('Some default value') },
-    ).run(new Flow())
+    ).run(new Flow({ onKill: jest.fn() }))
 
     const setDefault = jest.fn()
 

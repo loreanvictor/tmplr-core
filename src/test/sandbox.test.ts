@@ -69,6 +69,7 @@ describe(SandBox, () => {
       },
       { C: 'output' },
       scope,
+      new Flow({ onKill: jest.fn() }),
     )
 
     await sandbox.execute()
@@ -93,14 +94,20 @@ describe(SandBox, () => {
     }
 
     const scope = scopeFromProviders({ cleanable }, '_')
-    await new SandBox(() => new Steps([]), {}, {}, scope).execute()
+    await new SandBox(() => new Steps([]), {}, {}, scope, new Flow({ onKill: jest.fn() })).execute()
 
     expect(cleanable.cleanup).not.toHaveBeenCalled()
     expect(isolatedCleanup).toHaveBeenCalled()
   })
 
   test('throws proper error when command has not produced the output name.', async () => {
-    const sandbox = new SandBox(() => new Steps([]), {}, {x: 'x'}, scopeFromProviders({}, '_'))
+    const sandbox = new SandBox(
+      () => new Steps([]),
+      {},
+      {x: 'x'},
+      scopeFromProviders({}, '_'),
+      new Flow({ onKill: jest.fn() })
+    )
     await expect(async () => await sandbox.execute()).rejects.toThrow(ReferenceError)
   })
 
@@ -117,7 +124,8 @@ describe(SandBox, () => {
       },
       {
       },
-      scope
+      scope,
+      new Flow({ onKill: jest.fn() }),
     )
 
     const trace = sandbox.trace()
