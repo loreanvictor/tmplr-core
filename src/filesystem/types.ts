@@ -1,3 +1,8 @@
+export interface FetchOptions {
+  subgroup ?: boolean
+}
+
+
 export interface FileSystem {
   read(path: string): Promise<string>
   write(path: string, content: string): Promise<void>
@@ -12,7 +17,7 @@ export interface FileSystem {
   cd(path: string): FileSystem
   ls(path: string): Promise<string[]>
 
-  fetch(remote: string, dest: string): Promise<void>
+  fetch(remote: string, dest: string, options?: FetchOptions): Promise<void>
 }
 
 
