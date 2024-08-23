@@ -10,7 +10,7 @@ export class DegitExecution extends ChangeExecution {
   async commit() {
     const source = await this.delegate(this.degit.source.run(this.flow))
     const target = await this.delegate(this.degit.target.run(this.flow))
-    await this.degit.filesystem.fetch(source, target)
+    await this.degit.filesystem.fetch(source, target, { subgroup: this.degit.options.subgroup })
 
     return { source, target }
   }
@@ -18,6 +18,7 @@ export class DegitExecution extends ChangeExecution {
 
 
 export interface DegitExtras {
+  subgroup?: boolean
   log?: ChangeLog
 }
 
