@@ -7,6 +7,5 @@
 		"esModuleInterop": true,
 		"noImplicitAny": false
   },
-  "include": ["../../src"],
-	"exclude": ["../../**/test/**/*"]
+  "include": ["../../src"]
 }
