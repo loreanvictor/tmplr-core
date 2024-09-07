@@ -35,10 +35,13 @@ export class SandBox extends Execution<void> {
 
 
     const runnable = this.factory(scope)
+    const freeflow = this.flow.onKill(async () => await scope.cleanup())
+
     try {
       await this.delegate(runnable.run(this.flow))
     } finally {
       await scope.cleanup()
+      await freeflow()
     }
 
     for (const [name, outname] of Object.entries(this.outputs)) {

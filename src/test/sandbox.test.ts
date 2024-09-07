@@ -7,6 +7,8 @@ import { SandBox } from '../sandbox'
 import { CleanableProvider, providerFromFunctions, Scope, scopeFromProviders } from '../scope'
 import { EvaluationContext } from '../eval/context'
 import { Flow } from '../flow'
+import { Prompt, Value } from '../expr'
+import sleep from 'sleep-promise'
 
 
 class ExA extends Execution<void> {
@@ -69,7 +71,7 @@ describe(SandBox, () => {
       },
       { C: 'output' },
       scope,
-      new Flow({ onKill: jest.fn() }),
+      new Flow({ onKill: () => () => {} }),
     )
 
     await sandbox.execute()
@@ -94,10 +96,46 @@ describe(SandBox, () => {
     }
 
     const scope = scopeFromProviders({ cleanable }, '_')
-    await new SandBox(() => new Steps([]), {}, {}, scope, new Flow({ onKill: jest.fn() })).execute()
+    await new SandBox(() => new Steps([]), {}, {}, scope, new Flow({ onKill: () => () => {}})).execute()
 
     expect(cleanable.cleanup).not.toHaveBeenCalled()
     expect(isolatedCleanup).toHaveBeenCalled()
+  })
+
+  test('cleans up the scope on kill.', async () => {
+    const isolatedCleanup = jest.fn()
+    const cleanable: CleanableProvider = {
+      ...providerFromFunctions({ foo: async () => 'bar' }),
+      cleanup: jest.fn(),
+      isolate: () => ({ ...cleanable, cleanup: isolatedCleanup }),
+    }
+
+    const scope = scopeFromProviders({ cleanable }, '_')
+
+    const handlers: (() => Promise<void>)[] = []
+    const env = { onKill: cb => (handlers.push(cb), () => {}) }
+    const kill = async () => {
+      for (const handler of handlers) {
+        await handler()
+      }
+    }
+
+    await Promise.race([
+      new SandBox(
+        () => new Prompt(new Value('whatever')) as any,
+        {},
+        {},
+        scope,
+        new Flow(env),
+      ).execute(),
+      (async () => {
+        await sleep(1)
+        await kill()
+
+        expect(cleanable.cleanup).not.toHaveBeenCalled()
+        expect(isolatedCleanup).toHaveBeenCalled()
+      })()
+    ])
   })
 
   test('throws proper error when command has not produced the output name.', async () => {
@@ -106,7 +144,7 @@ describe(SandBox, () => {
       {},
       {x: 'x'},
       scopeFromProviders({}, '_'),
-      new Flow({ onKill: jest.fn() })
+      new Flow({ onKill: () => () => {} })
     )
     await expect(async () => await sandbox.execute()).rejects.toThrow(ReferenceError)
   })
@@ -125,7 +163,7 @@ describe(SandBox, () => {
       {
       },
       scope,
-      new Flow({ onKill: jest.fn() }),
+      new Flow({ onKill: () => () => {} }),
     )
 
     const trace = sandbox.trace()

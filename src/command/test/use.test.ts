@@ -75,7 +75,7 @@ describe(Use, () => {
       }
     )
 
-    await use.run(new Flow({ onKill: jest.fn() })).execute()
+    await use.run(new Flow({ onKill: () => () => {} })).execute()
 
     expect(dummyFS.fetch).toHaveBeenCalled()
     expect(dummyFS.read).toHaveBeenCalled()
@@ -109,7 +109,7 @@ describe(Use, () => {
       dummyFS,
       scope,
       new EvaluationContext(scope),
-    ).run(new Flow({ onKill: jest.fn() })).execute()
+    ).run(new Flow({ onKill: () => () => {} })).execute()
 
     expect(parse).toHaveBeenCalledWith(
       undefined,
@@ -134,8 +134,13 @@ describe(Use, () => {
     const scope = scopeFromProviders({}, '_', { foo: 'bar' })
     const parse = () => new Prompt(new Value('foo')) as any
 
-    let kill: () => Promise<void>
-    const flow = new Flow({ onKill: (cb) => (kill = cb, () => {}) })
+    const handlers: (() => Promise<void>)[] = []
+    const flow = new Flow({ onKill: (cb) => (handlers.push(cb), () => {})})
+    const kill = async () => {
+      for (const handler of handlers) {
+        await handler()
+      }
+    }
 
     await Promise.race([
       new Use(
@@ -147,8 +152,7 @@ describe(Use, () => {
       ).run(flow).execute(),
       (async () => {
         await sleep(1)
-        expect(kill!).toBeDefined()
-        await kill!()
+        await kill()
 
         expect(dummyFS.rm).toHaveBeenCalled()
         expect((dummyFS.rm as jest.Mock).mock.calls[0][0]).toMatch('.use-')
