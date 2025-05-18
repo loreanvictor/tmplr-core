@@ -38,10 +38,11 @@ export abstract class Execution<T> {
 
   public async execute(): Promise<T> {
     this.start()
-    const result = await this.run()
-    this.end()
-
-    return result
+    try {
+      return await this.run()
+    } finally {
+      this.end()
+    }
   }
 
   public trace() {
