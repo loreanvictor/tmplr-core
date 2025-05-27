@@ -15,6 +15,7 @@ describe(Exists, () => {
         '/src/expr/index.ts',
       ] },
       absolute: x => x.startsWith('/') ? x : `/${x}`,
+      scoped: x => x.startsWith('/') ? x : `/${x}`,
       read: jest.fn(), write: jest.fn(), rm: jest.fn(),
       access: jest.fn(), fetch: jest.fn(), cd: jest.fn(),
       basename: jest.fn(), dirname: jest.fn(),
@@ -36,6 +37,7 @@ describe(Exists, () => {
         '/src/.expr/index.ts',
       ] },
       absolute: x => x.startsWith('/') ? x : `/${x}`,
+      scoped: x => x.startsWith('/') ? x : `/${x}`,
       read: jest.fn(), write: jest.fn(), rm: jest.fn(),
       access: jest.fn(), fetch: jest.fn(), cd: jest.fn(),
       basename: jest.fn(), dirname: jest.fn(),
@@ -57,6 +59,7 @@ describe(Exists, () => {
         '/src/.expr/index.ts',
       ] },
       absolute: x => x.startsWith('/') ? x : `/${x}`,
+      scoped: x => x.startsWith('/') ? x : `/${x}`,
       read: jest.fn(), write: jest.fn(), rm: jest.fn(),
       access: jest.fn(), fetch: jest.fn(), cd: jest.fn(),
       basename: jest.fn(), dirname: jest.fn(),
@@ -66,5 +69,27 @@ describe(Exists, () => {
     const result = await exists.run(new Flow({ onKill: jest.fn() })).execute()
 
     expect(result).toBe('/src/.expr/index.ts')
+  })
+
+  test('checks for files inside filesystem scope when globbing.', async () => {
+    const dummyFS: FileSystem = {
+      root: '/root',
+      scope: '/scope',
+      async ls(path) {
+        expect(path).toBe('/scope')
+        return ['file.js']
+      },
+      absolute: x => `/root/${x}`,
+      scoped: x => `/scope/${x}`,
+      read: jest.fn(), write: jest.fn(), rm: jest.fn(),
+      access: jest.fn(), fetch: jest.fn(), cd: jest.fn(),
+      basename: jest.fn(), dirname: jest.fn(),
+    }
+
+    const exists = new Exists(new Value('file.js'), dummyFS)
+    await exists.run(new Flow({ onKill: jest.fn() })).execute()
+
+    expect(dummyFS.ls).toHaveBeenCalledWith('/scope')
+    expect(dummyFS.scoped).toHaveBeenCalledWith('file.js')
   })
 })

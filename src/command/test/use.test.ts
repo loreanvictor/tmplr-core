@@ -23,6 +23,7 @@ describe(Use, () => {
       dirname: (path: string) => dirname(path),
       basename: (path: string) => basename(path),
       absolute: (path: string) => path,
+      scoped: (path: string) => path,
       ls: async () => [],
       cd: jest.fn(() => dummyFS2),
       read: jest.fn(async file => {
@@ -94,6 +95,7 @@ describe(Use, () => {
     const dummyFS: FileSystem = {
       root: '', scope: '',
       dirname: jest.fn(), basename: jest.fn(), absolute: jest.fn(),
+      scoped: jest.fn(),
       ls: jest.fn(), read: jest.fn(), write: jest.fn(), access: jest.fn(), rm: jest.fn(),
       fetch: jest.fn(),
 
@@ -125,6 +127,7 @@ describe(Use, () => {
     const dummyFS: FileSystem = {
       root: '', scope: '',
       dirname: jest.fn(), basename: jest.fn(), absolute: jest.fn(),
+      scoped: jest.fn(),
       ls: jest.fn(), read: jest.fn(), write: jest.fn(), access: jest.fn(), rm: jest.fn(),
       fetch: jest.fn(),
 

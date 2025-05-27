@@ -17,8 +17,8 @@ export class RemoveExecution extends ChangeExecution {
 
     if (matcher.hasMagic()) {
       await Promise.all(
-        (await this.remove.filesystem.ls(this.remove.filesystem.root))
-          .map(path => this.remove.filesystem.absolute(path))
+        (await this.remove.filesystem.ls(this.remove.filesystem.scope))
+          .map(path => this.remove.filesystem.scoped(path))
           .filter(path => matcher.match(path))
           .map(async path => {
             await this.remove.filesystem.rm(path)

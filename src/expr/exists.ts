@@ -14,8 +14,8 @@ export class ExistsExecution extends Execution<string> {
   async run() {
     const target = this.exists.filesystem.absolute(await this.delegate(this.exists.target.run(this.flow)))
     const matcher = new Minimatch(target, { dot: this.exists.options.hidden })
-    const candidate = (await this.exists.filesystem.ls(this.exists.filesystem.root))
-      .map(path => this.exists.filesystem.absolute(path))
+    const candidate = (await this.exists.filesystem.ls(this.exists.filesystem.scope))
+      .map(path => this.exists.filesystem.scoped(path))
       .find(path => matcher.match(path))
 
     return candidate || ''

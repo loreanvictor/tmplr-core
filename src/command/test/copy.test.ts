@@ -16,6 +16,7 @@ describe(Copy, () => {
       write: jest.fn(),
       ls: jest.fn(async () => ['some/path']),
       absolute: jest.fn(x => normalize(x)),
+      scoped: jest.fn(x => normalize(x)),
       basename: jest.fn(),
       dirname: jest.fn(),
       rm: jest.fn(),
@@ -56,6 +57,7 @@ describe(Copy, () => {
       write: jest.fn(async (path, content) => { files[path] = content }),
       ls: jest.fn(async () => Object.keys(files)),
       absolute: jest.fn(x => normalize(x)),
+      scoped: jest.fn(x => normalize(x)),
       basename: jest.fn(),
       dirname: jest.fn(),
       rm: jest.fn(),
@@ -95,6 +97,7 @@ describe(Copy, () => {
       write: jest.fn(async (path, content) => { files[path] = content }),
       ls: jest.fn(async () => Object.keys(files).map(file => file.slice(6))),
       absolute: jest.fn(x => normalize(isAbsolute(x) ? x : join('/user', x))),
+      scoped: jest.fn(x => normalize(isAbsolute(x) ? x : join('/user', x))),
       basename: jest.fn(),
       dirname: jest.fn(),
       rm: jest.fn(),
@@ -133,6 +136,7 @@ describe(Copy, () => {
       write: jest.fn(async (path, content) => { files[path] = content }),
       ls: jest.fn(async () => Object.keys(files).map(file => file.slice(6))),
       absolute: jest.fn(x => normalize(isAbsolute(x) ? x : join('/user', x))),
+      scoped: jest.fn(x => normalize(isAbsolute(x) ? x : join('/user', x))),
       basename: jest.fn(),
       dirname: jest.fn(),
       rm: jest.fn(),
@@ -170,6 +174,7 @@ describe(Copy, () => {
       write: jest.fn(async (path, content) => { files[path] = content }),
       ls: jest.fn(async () => Object.keys(files).map(file => file.slice(6))),
       absolute: jest.fn(x => normalize(isAbsolute(x) ? x : join('/user', x))),
+      scoped: jest.fn(x => normalize(isAbsolute(x) ? x : join('/user', x))),
       basename: jest.fn(),
       dirname: jest.fn(),
       rm: jest.fn(),
@@ -194,5 +199,38 @@ describe(Copy, () => {
     expect(files['/user/target/path.js']).toBe('aaa')
     expect(files['/user/target/.other/path.js']).toBe('bbb')
     expect(files['/user/target/.other-stuff.js']).toBe('ccc')
+  })
+
+  test('searches for glob matches within filesystem scope.', async () => {
+    const dummyFS: FileSystem = {
+      read: jest.fn(async () => ''),
+      write: jest.fn(),
+      ls: jest.fn(async path => {
+        expect(path).toBe('/scope')
+        return ['file.js']
+      }),
+      absolute: jest.fn(x => `/root/${x}`),
+      scoped: jest.fn(x => `/scope/${x}`),
+      basename: jest.fn(),
+      dirname: jest.fn(),
+      rm: jest.fn(),
+      access: jest.fn(),
+      fetch: jest.fn(),
+      cd: jest.fn(),
+      scope: '/scope',
+      root: '/root',
+    }
+
+    const context = new EvaluationContext({})
+
+    await new Copy(
+      new Value('file.js'),
+      new Value('dest'),
+      dummyFS,
+      context,
+    ).run(new Flow({ onKill: jest.fn() })).execute()
+
+    expect(dummyFS.ls).toHaveBeenCalledWith('/scope')
+    expect(dummyFS.scoped).toHaveBeenCalledWith('file.js')
   })
 })

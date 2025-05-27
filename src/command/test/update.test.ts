@@ -15,6 +15,7 @@ describe(Update, () => {
       read: jest.fn(async () => 'hellow {{ _.name }}, how is {{ _.other }}?'),
       write: jest.fn(),
       absolute: jest.fn(x => normalize(x)),
+      scoped: jest.fn(x => normalize(x)),
       dirname: jest.fn(),
       basename: jest.fn(),
       ls: jest.fn(async () => ['some/path', 'some/other/path', 'some/third-file']),
@@ -47,6 +48,7 @@ describe(Update, () => {
       read: jest.fn(async () => 'hellow {{ _.name }}, how is {{ _.other }}?'),
       write: jest.fn(),
       absolute: jest.fn(x => normalize(x)),
+      scoped: jest.fn(x => normalize(x)),
       dirname: jest.fn(),
       basename: jest.fn(),
       ls: jest.fn(async () => ['some/path', 'some/other/path', 'some/third-file']),
@@ -85,6 +87,7 @@ describe(Update, () => {
       read: jest.fn(async path => files[path]),
       write: jest.fn(async (path, content) => { files[path] = content }),
       absolute: jest.fn(x => normalize(isAbsolute(x) ? x : join('/user', x))),
+      scoped: jest.fn(x => normalize(isAbsolute(x) ? x : join('/user', x))),
       dirname: jest.fn(),
       basename: jest.fn(),
       ls: jest.fn(async () => Object.keys(files).map(x => x.slice(6))),
@@ -113,6 +116,7 @@ describe(Update, () => {
       read: jest.fn(async () => 'hellow {{ _.name }}, how is {{ _.other }}?'),
       write: jest.fn(),
       absolute: jest.fn(x => normalize(x)),
+      scoped: jest.fn(x => normalize(x)),
       dirname: jest.fn(),
       basename: jest.fn(),
       ls: jest.fn(async () => ['some/path', 'some/.other/path', 'some/.third-file']),
@@ -145,6 +149,7 @@ describe(Update, () => {
       read: jest.fn(async () => 'hellow {{ _.name }}, how is {{ _.other }}?'),
       write: jest.fn(),
       absolute: jest.fn(x => normalize(x)),
+      scoped: jest.fn(x => normalize(x)),
       dirname: jest.fn(),
       basename: jest.fn(),
       ls: jest.fn(async () => ['some/path', 'some/.other/path', 'some/.third-file']),
@@ -170,5 +175,37 @@ describe(Update, () => {
     expect(dummyFS.write).toHaveBeenCalledWith('some/path', 'hellow world, how is {{ _.other }}?')
     expect(dummyFS.write).toHaveBeenCalledWith('some/.other/path', 'hellow world, how is {{ _.other }}?')
     expect(dummyFS.write).toHaveBeenCalledWith('some/.third-file', 'hellow world, how is {{ _.other }}?')
+  })
+
+  test('searches filesystem scope for glob patterns.', async () => {
+    const dummyFS: FileSystem = {
+      read: jest.fn(),
+      write: jest.fn(),
+      absolute: jest.fn(x => `/root/${x}`),
+      scoped: jest.fn(x => `/scope/${x}`),
+      dirname: jest.fn(),
+      basename: jest.fn(),
+      ls: jest.fn(async path => {
+        expect(path).toBe('/scope')
+        return ['file.js']
+      }),
+      rm: jest.fn(),
+      access: jest.fn(),
+      fetch: jest.fn(),
+      cd: jest.fn(),
+      scope: '/scope',
+      root: '/root',
+    }
+
+    const context = new EvaluationContext({})
+
+    await new Update(
+      new Value('file.js'),
+      dummyFS,
+      context,
+    ).run(new Flow({ onKill: jest.fn() })).execute()
+
+    expect(dummyFS.ls).toHaveBeenCalledWith('/scope')
+    expect(dummyFS.scoped).toHaveBeenCalledWith('file.js')
   })
 })

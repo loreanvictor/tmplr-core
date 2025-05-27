@@ -13,6 +13,7 @@ describe(Remove, () => {
       read: jest.fn(),
       write: jest.fn(),
       absolute: jest.fn(x => normalize(x)),
+      scoped: jest.fn(x => normalize(x)),
       basename: jest.fn(),
       dirname: jest.fn(),
       ls: jest.fn(() => Promise.resolve(['some/path', 'some/other/path'])),
@@ -49,6 +50,7 @@ describe(Remove, () => {
       read: jest.fn(),
       write: jest.fn(),
       absolute: jest.fn(x => normalize(x)),
+      scoped: jest.fn(x => normalize(x)),
       basename: jest.fn(),
       dirname: jest.fn(),
       ls: jest.fn(async () => files),
@@ -83,6 +85,7 @@ describe(Remove, () => {
       read: jest.fn(),
       write: jest.fn(),
       absolute: jest.fn(x => normalize(isAbsolute(x) ? x : join('/user', x))),
+      scoped: jest.fn(x => normalize(isAbsolute(x) ? x : join('/user', x))),
       basename: jest.fn(),
       dirname: jest.fn(),
       ls: jest.fn(async () => files.map(file => file.slice(6))),
@@ -109,6 +112,7 @@ describe(Remove, () => {
     const dummyFS: FileSystem = {
       read: jest.fn(),
       absolute: jest.fn(x => x),
+      scoped: jest.fn(x => x),
       write: jest.fn(),
       basename: jest.fn(),
       dirname: jest.fn(),
@@ -133,6 +137,7 @@ describe(Remove, () => {
     const dummyFS: FileSystem = {
       read: jest.fn(),
       absolute: jest.fn(x => x),
+      scoped: jest.fn(x => x),
       write: jest.fn(),
       basename: jest.fn(),
       dirname: jest.fn(),
@@ -180,5 +185,34 @@ describe(Remove, () => {
     expect(dummyFS.rm).toHaveBeenCalledWith('some/path')
     expect(dummyFS.rm).toHaveBeenCalledWith('some/.other/path')
     expect(dummyFS.rm).toHaveBeenCalledWith('some/.third-thing')
+  })
+
+  test('scans filesystem scope for glob targets.', async () => {
+    const dummyFS: FileSystem = {
+      read: jest.fn(),
+      write: jest.fn(),
+      absolute: jest.fn(x => `/root/${x}`),
+      scoped: jest.fn(x => `/scope/${x}`),
+      basename: jest.fn(),
+      dirname: jest.fn(),
+      ls: jest.fn(async path => {
+        expect(path).toBe('/scope')
+        return ['file.js']
+      }),
+      rm: jest.fn(),
+      access: jest.fn(),
+      fetch: jest.fn(),
+      cd: jest.fn(),
+      scope: '/scope',
+      root: '/root',
+    }
+
+    await new Remove(
+      new Value('*.js'),
+      dummyFS,
+    ).run(new Flow({ onKill: jest.fn() })).execute()
+
+    expect(dummyFS.ls).toHaveBeenCalledWith('/scope')
+    expect(dummyFS.scoped).toHaveBeenCalledWith('file.js')
   })
 })
