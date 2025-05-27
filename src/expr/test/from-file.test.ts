@@ -10,6 +10,7 @@ describe(FromFile, () => {
       root: '/',
       scope: '/',
       absolute: x => x.startsWith('/') ? x : `/${x}`,
+      scoped: x => x.startsWith('/') ? x : `/${x}`,
       read: async file => {
         if (file === '/package.json') {
           return JSON.stringify({ name: 'test' })
@@ -33,6 +34,7 @@ describe(FromFile, () => {
       root: '/',
       scope: '/',
       absolute: x => x.startsWith('/') ? x : `/${x}`,
+      scoped: x => x.startsWith('/') ? x : `/${x}`,
       read: async file => {
         if (file === '/package.json') {
           return JSON.stringify({ name: 'test' })

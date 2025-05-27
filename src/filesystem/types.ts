@@ -12,6 +12,7 @@ export interface FileSystem {
   scope: string
   root: string
   absolute(path: string): string
+  scoped(path: string): string
   basename(path: string): string
   dirname(path: string): string
   cd(path: string): FileSystem

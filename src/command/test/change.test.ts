@@ -17,6 +17,7 @@ describe(ChangeExecution, () => {
       scope: 'scope',
       root: 'root',
       absolute: jest.fn(() => 'absolute'),
+      scoped: jest.fn(() => 'absolute'),
       basename: jest.fn(path => basename(path)),
       dirname: jest.fn(path => dirname(path)),
       cd: jest.fn(() => dummyFS),

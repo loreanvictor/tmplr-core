@@ -15,8 +15,8 @@ export class UpdateExecution extends ChangeExecution {
     const updates: {target: string, content: string, updated: string}[] = []
 
     await Promise.all(
-      (await this.update.filesystem.ls(this.update.filesystem.root))
-        .map(path => this.update.filesystem.absolute(path))
+      (await this.update.filesystem.ls(this.update.filesystem.scope))
+        .map(path => this.update.filesystem.scoped(path))
         .filter(path => minimatch(path, target, { dot: this.update.options.hidden }))
         .map(async path => {
           const content = await this.update.filesystem.read(path)
